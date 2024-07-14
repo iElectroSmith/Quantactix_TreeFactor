@@ -1,7 +1,8 @@
+
 #include "json_io.h"
 // JSON
 
-json tree_to_json(APTree &root)
+json tree_to_json(CAPTree &root)
 {
     json output;
     output["dim_theta"] = root.theta.size();
@@ -14,7 +15,7 @@ json tree_to_json(APTree &root)
     return output;
 }
 
-void json_to_tree(std::string &json_string, APTree &root)
+void json_to_tree(std::string &json_string, CAPTree &root)
 {
     auto j3 = json::parse(json_string);
 

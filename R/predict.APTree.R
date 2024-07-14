@@ -1,5 +1,9 @@
+
+
 predict.APTree = function(model, X, R, months, weight = NULL)
 {
+    
+    
     # make sure that months begin with zero
 
     X = as.matrix(X)
@@ -46,7 +50,9 @@ predict.APTree = function(model, X, R, months, weight = NULL)
         if(weight_portfolio[i]!=0)
         {
             portfolio[i] = portfolio[i] / weight_portfolio[i]
-        }else{
+        }
+        else
+        {
             portfolio[i] = 0
         }
     }
@@ -56,4 +62,8 @@ predict.APTree = function(model, X, R, months, weight = NULL)
     output$ft = portfolio %*% model$leaf_weight
 
     return(output)
+    
 }
+
+
+
