@@ -1,25 +1,32 @@
+
 library(TreeFactor)
 library(rpart)
 library(ranger)
 
-tf_residual = function(fit,Y,Z,H,months,no_H){
+tf_residual = function(fit,Y,Z,H,months,no_H)
+{
+
   # Tree Factor Models
   regressor = Z
   for(j in 1:dim(Z)[2])
   {
     regressor[,j] = Z[,j] * fit$ft[months + 1]
   }
+
   if(!no_H)
   {
     regressor = cbind(regressor, H)
   }
+
   # print(fit$R2*100)
   x <- as.matrix(regressor)
   y <- Y
   b_tf = solve(t(x)%*%x)%*%t(x)%*%y
   haty <- (x%*%b_tf)[,1]
   print(b_tf)
+  
   return(Y-haty)
+
 }
 
 ###### parameters #####
@@ -44,26 +51,27 @@ nu = 1
 # this tiny regularization ensures the matrix inversion
 # penalty for the sigma (sigma + lambda I)^{-1} * mu
 lambda = 1e-4
-eta=1
+eta = 1
+
 
 ##### load data #####
 
 #load("../../data/simu_data.rda")
 load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
-print(names(da))
+print( names( da ) )
 
 data <- da
 data['lag_me'] = 1
 
-tmp = data[,c('id', 'date','xret','lag_me', 
+tmp = data[, c('id', 'date','xret','lag_me', 
               # 5
               'c1', 'c2', 'c3', 'c4', 'c5', # 9
               'm1','m2', # 11
               'mkt' # 12
-              )]
+              ) ]
 data = tmp
-rm(tmp)
-rm(da)
+rm( tmp )
+rm( da )
 
 # chars
 
@@ -72,7 +80,7 @@ top5chars <- c(1:5)
 instruments = all_chars[top5chars]
 splitting_chars <- all_chars
 
-first_split_var = c(1:5)-1
+first_split_var  = c(1:5)-1
 second_split_var = c(1:5)-1
 
 first_split_var_boosting = c(1:5)-1
@@ -107,9 +115,9 @@ H_train1 = H_train1 * Z_train
 # train 1 
 t = proc.time()
 fit1 = TreeFactor_APTree(R_train, Y_train1, X_train, Z_train, H_train1, portfolio_weight_train, 
-loss_weight_train, stocks_train, months_train, first_split_var, second_split_var, num_stocks, 
-num_months, min_leaf_size, max_depth, num_iter, num_cutpoints, lambda, eta, equal_weight, 
-no_H, abs_normalize, weighted_loss, stop_no_gain)
+                        loss_weight_train, stocks_train, months_train, first_split_var, second_split_var, num_stocks, 
+                        num_months, min_leaf_size, max_depth, num_iter, num_cutpoints, lambda, eta, equal_weight, 
+                        no_H, abs_normalize, weighted_loss, stop_no_gain)
 t = proc.time() - t
 print(t)
 
@@ -135,9 +143,9 @@ no_H2 = TRUE
 # train
 t = proc.time()
 fit2 = TreeFactor_APTree(R_train, Y_train2, X_train, Z_train, H_train1, portfolio_weight_train, 
-loss_weight_train, stocks_train, months_train, first_split_var_boosting, second_split_var_boosting, num_stocks, 
-num_months, min_leaf_size, max_depth_boosting, num_iter, num_cutpoints, lambda, eta, equal_weight, 
-no_H2, abs_normalize, weighted_loss, stop_no_gain)
+                        loss_weight_train, stocks_train, months_train, first_split_var_boosting, second_split_var_boosting, num_stocks, 
+                        num_months, min_leaf_size, max_depth_boosting, num_iter, num_cutpoints, lambda, eta, equal_weight, 
+                        no_H2, abs_normalize, weighted_loss, stop_no_gain)
 t = proc.time() - t
 print(t)
 print(fit2$R2)

@@ -8,6 +8,7 @@
 // [[Rcpp::export]]
 Rcpp::List predict_APTree_cpp( arma::mat X , Rcpp::StringVector json_string , arma::vec months )
 {
+
     size_t N = X.n_rows;
 
     arma::vec leaf_index( N );
@@ -27,6 +28,6 @@ Rcpp::List predict_APTree_cpp( arma::mat X , Rcpp::StringVector json_string , ar
 
     model->predict_AP( X , *root , months , leaf_index );
 
-    return Rcpp::List::create(
-        Rcpp::Named( "leaf_index" ) = leaf_index );
+    return Rcpp::List::create( Rcpp::Named( "leaf_index" ) = leaf_index );
+
 }

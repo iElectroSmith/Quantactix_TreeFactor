@@ -126,6 +126,7 @@ public:
            bool& equal_weight , bool& no_H , bool& abs_normalize , bool& weighted_loss , 
            bool& stop_no_gain , double& lambda , size_t& num_obs_all , arma::mat& first_split_mat )
     {
+
         this->X = &X;
         this->Y = &Y;
         this->R = &R;

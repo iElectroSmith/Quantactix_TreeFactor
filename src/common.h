@@ -37,6 +37,7 @@ bool sum(std::vector<bool> &v);
 
 class leaf_data
 {
+
 public:
     std::vector<double> R;
     std::vector<size_t> months;
@@ -44,14 +45,18 @@ public:
     std::vector<double> weight;
 
     leaf_data(size_t N) : R(N, 0.0), months(N, 0), stocks(N, 0), weight(N, 0) {}
+
 };
 
 struct node_info
 {
+
     std::size_t id; //node id
     std::size_t v;  //variable
     double c;       //cut point // different from BART
+
     std::vector<double> theta;
+
 };
 
 double log_normal_density(arma::vec &R, arma::mat &cov);
@@ -61,10 +66,15 @@ double soft_c(double a, double lambda);
 
 double lasso_loss(const arma::mat &X, const arma::mat &Y, const arma::vec &beta, double lambda);
 
-arma::vec lasso_fit_standardized(const arma::mat &X, const arma::mat &Y, double lambda, const arma::vec &beta_ini, double eps);
+arma::vec lasso_fit_standardized(const arma::mat &X, const arma::mat &Y, double lambda, 
+                                 const arma::vec &beta_ini, double eps);
 
 // indepenent sampler of univariate regression model with conjugate prior
-Rcpp::List runireg_rcpp_loop(arma::vec const& y, arma::mat const& X, arma::vec const& betabar, arma::mat const& A, double nu, double ssq, size_t R, size_t keep);
+Rcpp::List runireg_rcpp_loop( arma::vec const& y, arma::mat const& X, arma::vec const& betabar, 
+                              arma::mat const& A, double nu, double ssq, size_t R, size_t keep);
 
 void int_to_bin(size_t num, std::vector<size_t> &s);
+
 #endif
+
+
