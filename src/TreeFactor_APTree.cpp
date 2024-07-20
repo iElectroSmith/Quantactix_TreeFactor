@@ -1,4 +1,6 @@
 
+#include <RcppArmadillo.h>
+#include <csignal>
 
 #include "common.h"
 #include "state.h"
@@ -6,7 +8,9 @@
 #include "model.h"
 #include "json_io.h"
 
-
+#ifndef SIGTRAP
+#define SIGTRAP 5  // 手动定义SIGTRAP
+#endif
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
@@ -21,6 +25,15 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma
                                   bool stop_no_gain = false , double lambda_mean = 0 , double lambda_cov = 0 )
 {
 
+    
+    //std::raise(SIGTRAP)
+    //Rcpp::stop("Breakpoint reached.");
+    //Rcpp::browser( );
+    Rcpp::Rcout << "______Debug point reached." << std::endl; 
+    Rcpp::Rcerr << "______Debug point reached______." << std::endl;
+    std::cout<< "______Debug point reached." << std::endl; 
+    printf("______Debug point reached.") ;
+    
     // we assume the number of months is continuous
     std::map<size_t , size_t> months_list;
     assert( num_months == unique_months.n_elem );

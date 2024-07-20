@@ -13,9 +13,12 @@
 #include <algorithm>
 #include <omp.h>
 
+
 #include "RcppArmadillo.h"
 #include "Rcpp.h"
 #include "omp.h"
+
+#include <csignal>
 
 using namespace std;
 using namespace arma;

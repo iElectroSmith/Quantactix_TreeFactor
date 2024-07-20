@@ -1,5 +1,10 @@
+
+
+
 #include "model.h"
 #include "APTree.h"
+
+
 ////////////////////////////
 //
 //
@@ -12,8 +17,14 @@ void CAPTreeModel::check_node_splitability( State& state ,
                                             std::vector<CAPTree*>& bottom_nodes_vec ,
                                             std::vector<bool>& node_splitability )
 {
+   
+   
+    //raise(SIGTRAP);  // Insert this line to trigger a breakpoint    
+    
     CAPTree::APTree_p node;
 
+
+    
     // check node depth and number of data observations
     for( size_t i = 0 ; i < bottom_nodes_vec.size( ) ; i++ )
     {

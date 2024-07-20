@@ -1,3 +1,5 @@
+
+
 #include "common.h"
 #include "APTree.h"
 #include "model.h"
@@ -8,6 +10,8 @@
 // [[Rcpp::export]]
 Rcpp::List predict_APTree_cpp( arma::mat X , Rcpp::StringVector json_string , arma::vec months )
 {
+
+    //raise(SIGTRAP);      
 
     size_t N = X.n_rows;
 

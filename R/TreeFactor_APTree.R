@@ -1,6 +1,9 @@
 
 
-
+library(Rcpp)
+#sourceCpp("./src/predict_APTree.cpp")
+#sourceCpp("./src/TreeFactor_APTree.cpp")
+#sourceCpp("./src/TreeFactor_APTree_2.cpp")
 
 TreeFactor_APTree <- function( R, Y, X, Z, H, portfolio_weight, loss_weight, stocks, months, first_split_var, 
                                second_split_var, num_stocks, num_months, min_leaf_size, max_depth, num_iter, 
