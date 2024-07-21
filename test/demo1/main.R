@@ -116,10 +116,33 @@ H_train1 = H_train1 * Z_train
 
 # train 1 
 t = proc.time()
-fit1 = TreeFactor_APTree(R_train, Y_train1, X_train, Z_train, H_train1, portfolio_weight_train, 
-                        loss_weight_train, stocks_train, months_train, first_split_var, second_split_var, num_stocks, 
-                        num_months, min_leaf_size, max_depth, num_iter, num_cutpoints, lambda, eta, equal_weight, 
-                        no_H, abs_normalize, weighted_loss, stop_no_gain)
+
+
+fit1 = TreeFactor_APTree( R_train, 
+                          Y_train1, 
+                          X_train, 
+                          Z_train, 
+                          H_train1, 
+                          portfolio_weight_train, 
+                          loss_weight_train, 
+                          stocks_train, 
+                          months_train, 
+                          first_split_var, 
+                          second_split_var, 
+                          num_stocks, 
+                          num_months, 
+                          min_leaf_size, 
+                          max_depth, 
+                          num_iter, 
+                          num_cutpoints, 
+                          lambda, 
+                          eta, 
+                          equal_weight, 
+                          no_H, 
+                          abs_normalize, 
+                          weighted_loss, 
+                          stop_no_gain )
+                          
 t = proc.time() - t
 print(t)
 

@@ -4,6 +4,7 @@
 
 size_t CAPTree::nid( ) const
 {
+
     if( !parentNode )
         return 1; //if you don't have a parent, you are the top
 
@@ -14,19 +15,20 @@ size_t CAPTree::nid( ) const
 
 }
 
-CAPTree::APTree_p CAPTree::getParent( size_t nid )
+CAPTree::APTree_Pt CAPTree::getParent( size_t nid )
 {
+
     if( this->nid( ) == nid )
         return this; //found it
 
     if( leftChild == 0 )
         return 0; //no children, did not find it
 
-    APTree_p lp = leftChild->getParent( nid );
+    APTree_Pt lp = leftChild->getParent( nid );
     if( lp )
         return lp; //found on left
 
-    APTree_p rp = rightChild->getParent( nid );
+    APTree_Pt rp = rightChild->getParent( nid );
     if( rp )
         return rp; //found on right
     
@@ -34,12 +36,12 @@ CAPTree::APTree_p CAPTree::getParent( size_t nid )
 
 }
 
-size_t CAPTree::treesize( )
+size_t CAPTree::treeSize( )
 {
     if( leftChild == 0 )
         return 1; //if bottom node, tree size is 1
     else
-        return ( 1 + leftChild->treesize( ) + rightChild->treesize( ) );
+        return ( 1 + leftChild->treeSize( ) + rightChild->treeSize( ) );
 }
 
 char CAPTree::ntype( )
@@ -47,12 +49,18 @@ char CAPTree::ntype( )
     //t:top, b:bottom, n:no grandchildren, i:internal
     if( !parentNode )
         return 't';
+
     if( !leftChild )
         return 'b';
+
     if( !( leftChild->leftChild ) && !( rightChild->leftChild ) )
         return 'n';
+
     return 'i';
+
 }
+
+
 
 void CAPTree::printScreen( bool pc )
 {
@@ -60,6 +68,7 @@ void CAPTree::printScreen( bool pc )
     size_t depth = this->depth ;
     size_t id = nid( );
     size_t pid;
+
     if( !parentNode )
         pid = 0; //parent of top node
     else
@@ -67,8 +76,10 @@ void CAPTree::printScreen( bool pc )
 
     std::string pad( 2 * depth , ' ' );
     std::string strSplit( ", " );
+
     if( pc && ( ntype( ) == 't' ) )
-        std::cout << "tree size: " << treesize( ) << std::endl;
+        std::cout << "tree size: " << treeSize( ) << std::endl;
+
     std::cout << pad << "(id,parent): " << id << strSplit << pid;
     std::cout << strSplit << "(v,c): " << v << strSplit << c;
     // std::cout << sp << "theta: " << theta;
@@ -78,17 +89,24 @@ void CAPTree::printScreen( bool pc )
 
     if( pc )
     {
+
         if( leftChild )
         {
             leftChild->printScreen( pc );
             rightChild->printScreen( pc );
         }
+
     }
+
 }
+
+
 
 bool CAPTree::isnog( )
 {
+
     bool isnog = true;
+
     if( leftChild )
     {
         if( leftChild->leftChild || rightChild->leftChild )
@@ -98,37 +116,46 @@ bool CAPTree::isnog( )
     {
         isnog = false; //no children
     }
+
     return isnog;
+
 }
 
-size_t CAPTree::nnogs( )
+
+size_t CAPTree::numNoGrandChildsNodes( )
 {
+
     if( !leftChild )
         return 0; //bottom node
+
     if( leftChild->leftChild || rightChild->leftChild )
     { //not a nog
-        return ( leftChild->nnogs( ) + rightChild->nnogs( ) );
+        return ( leftChild->numNoGrandChildsNodes( ) + rightChild->numNoGrandChildsNodes( ) );
     }
     else
     { //is a nog
         return 1;
     }
+
 }
 
-size_t CAPTree::nbots( )
+size_t CAPTree::numLeafNodes( )
 {
+
     if( leftChild == 0 )
     { //if a bottom node
         return 1;
     }
     else
     {
-        return leftChild->nbots( ) + rightChild->nbots( );
+        return leftChild->numLeafNodes( ) + rightChild->numLeafNodes( );
     }
+
 }
 
-void CAPTree::getbots( npv& bv )
+void CAPTree::getbots( vec_APTree_Pt& bv )
 {
+
     if( leftChild )
     { //have children
         leftChild->getbots( bv );
@@ -138,28 +165,35 @@ void CAPTree::getbots( npv& bv )
     {
         bv.push_back( this );
     }
+
 }
 
-void CAPTree::getnogs( npv& nv )
+void CAPTree::getNoGrandChildsNodes( vec_APTree_Pt& nv )
 {
+
     if( leftChild )
-    { //have children
+    { 
+        //have children
         if( ( leftChild->leftChild ) || ( rightChild->leftChild ) )
-        { //have grandchildren
+        { 
+            //have grandchildren
             if( leftChild->leftChild )
-                leftChild->getnogs( nv );
+                leftChild->getNoGrandChildsNodes( nv );
+
             if( rightChild->leftChild )
-                rightChild->getnogs( nv );
+                rightChild->getNoGrandChildsNodes( nv );
         }
         else
         {
             nv.push_back( this );
         }
     }
+
 }
 
-CAPTree::APTree_p CAPTree::gettop( )
+CAPTree::APTree_Pt CAPTree::gettop( )
 {
+
     if( !parentNode )
     {
         return this;
@@ -168,29 +202,41 @@ CAPTree::APTree_p CAPTree::gettop( )
     {
         return parentNode->gettop( );
     }
+
 }
 
-void CAPTree::getnodes( npv& v )
+void CAPTree::getnodes( vec_APTree_Pt& v )
 {
+
     v.push_back( this );
+
     if( leftChild )
     {
         leftChild->getnodes( v );
         rightChild->getnodes( v );
     }
+
 }
-void CAPTree::getnodes( cnpv& v ) const
+
+
+void CAPTree::getnodes( vec_APTree_cnstPt& v ) const
 {
+
     v.push_back( this );
+
     if( leftChild )
     {
         leftChild->getnodes( v );
         rightChild->getnodes( v );
     }
+
 }
 
-CAPTree::APTree_p CAPTree::bn( arma::mat& x , size_t& row_ind )
+
+
+CAPTree::APTree_Pt CAPTree::bn( arma::mat& x , size_t& row_ind )
 {
+
     // v is variable to split, c is raw value
     // not index in matrix<double>, so compare x[v] with c directly
     if( leftChild == 0 )
@@ -204,18 +250,20 @@ CAPTree::APTree_p CAPTree::bn( arma::mat& x , size_t& row_ind )
     {
         return rightChild->bn( x , row_ind );
     }
+
 }
 
 void CAPTree::toNull( )
 {
-    size_t ts = treesize( );
+
+    size_t ts = treeSize( );
 
     //loop invariant: ts>=1
     while( ts > 1 )
     { 
         //if false ts=1
-        npv nv;
-        getnogs( nv );
+        vec_APTree_Pt nv;
+        getNoGrandChildsNodes( nv );
         for( size_t i = 0; i < nv.size( ); i++ )
         {
             delete nv[ i ]->leftChild;
@@ -224,7 +272,7 @@ void CAPTree::toNull( )
             nv[ i ]->rightChild = 0;
         }
 
-        ts = treesize( ); //make invariant true
+        ts = treeSize( ); //make invariant true
 
     }
 
@@ -237,12 +285,14 @@ void CAPTree::toNull( )
 
 }
 
+
 //copy tree tree o to tree n
-void CAPTree::copyTree( APTree_p n , APTree_cp o )
+void CAPTree::copyTree( APTree_Pt n , APTree_cnstPt o )
 //assume n has no children (so we don't have to kill them)
 //recursion down
 // create a new copy of tree in NEW memory space
 {
+
     if( n->leftChild )
     {
         std::cout << "cp:error node has children\n";
@@ -254,21 +304,25 @@ void CAPTree::copyTree( APTree_p n , APTree_cp o )
     n->theta = o->theta;
 
     if( o->leftChild )
-    { //if o has children
+    { 
+        //if o has children
         n->leftChild = new CAPTree;
         ( n->leftChild )->parentNode = n;
         copyTree( n->leftChild , o->leftChild );
+
         n->rightChild = new CAPTree;
         ( n->rightChild )->parentNode = n;
         copyTree( n->rightChild , o->rightChild );
     }
+
 }
 
-void CAPTree::copy_only_root( APTree_p o )
+void CAPTree::copy_only_root( APTree_Pt o )
 //assume n has no children (so we don't have to kill them)
 //NOT LIKE cp() function
 //this function pointer new root to the OLD structure
 {
+
     this->v = o->v;
     this->c = o->c;
     this->theta = o->theta;
@@ -287,7 +341,10 @@ void CAPTree::copy_only_root( APTree_p o )
         this->leftChild = 0;
         this->rightChild = 0;
     }
+
 }
+
+
 
 //--------------------------------------------------
 //operators
@@ -300,13 +357,14 @@ CAPTree& CAPTree::operator=( const CAPTree& rhs )
     }
     return *this;
 }
+
 //--------------------------------------------------
-std::ostream& operator<<( std::ostream& os , const CAPTree& t )
+std::ostream& operator<<( std::ostream& os , const CAPTree& APTree )
 {
 
-    CAPTree::cnpv nds;
+    CAPTree::vec_APTree_cnstPt nds;
 
-    t.getnodes( nds );
+    APTree.getnodes( nds );
     os << nds.size( ) << std::endl;
 
     // size_t theta_length = nds[0]->getthetasize();
@@ -330,11 +388,12 @@ std::ostream& operator<<( std::ostream& os , const CAPTree& t )
     return os;
 }
 
+
 std::istream& operator>>( std::istream& is , CAPTree& t )
 {
 
     size_t tid , pid;                        //tid: id of current node, pid: parent's id
-    std::map<size_t , CAPTree::APTree_p> pts; //pointers to nodes indexed by node id
+    std::map<size_t , CAPTree::APTree_Pt> pts; //pointers to nodes indexed by node id
     size_t nn;                              //number of nodes
 
     t.toNull( ); // obliterate old tree (if there)
@@ -369,7 +428,7 @@ std::istream& operator>>( std::istream& is , CAPTree& t )
     //now loop through the rest of the nodes knowing parent is already there.
     for( size_t i = 1; i != nv.size( ); i++ )
     {
-        CAPTree::APTree_p np = new CAPTree;
+        CAPTree::APTree_Pt np = new CAPTree;
         np->v = nv[ i ].v;
         np->c = nv[ i ].c;
         np->theta = nv[ i ].theta;
@@ -394,8 +453,14 @@ std::istream& operator>>( std::istream& is , CAPTree& t )
 
 }
 
-void CAPTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right , arma::umat& Xorder , size_t split_point , size_t split_var , State& state )
+void CAPTree::split_Xorder( arma::umat& Xorder_left , 
+                            arma::umat& Xorder_right , 
+                            arma::umat& Xorder , 
+                            size_t split_point , 
+                            size_t split_var , 
+                            State& state )
 {
+
     size_t num_obs = Xorder.n_rows;
 
     double cutvalue = state.split_candidates[ split_point ];
@@ -436,7 +501,9 @@ void CAPTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right ,
 
 json CAPTree::to_json( )
 {
+
     json j;
+    
     if( leftChild == 0 )
     {
         j = this->theta;
@@ -451,8 +518,11 @@ json CAPTree::to_json( )
         j[ "left" ] = this->leftChild->to_json( );
         j[ "right" ] = this->rightChild->to_json( );
     }
+
     return j;
+
 }
+
 
 void CAPTree::from_json( json& j3 , size_t dim_theta )
 {
@@ -497,7 +567,10 @@ void CAPTree::from_json( json& j3 , size_t dim_theta )
 }
 
   
-void CAPTree::grow( bool& break_flag , CAPTreeModel& model , State& state , size_t& iter , 
+void CAPTree::grow( bool& break_flag , 
+                    CAPTreeModel& model , 
+                    State& state , 
+                    size_t& iter , 
                     std::vector<double>& criterion_values )
 {
 
@@ -524,7 +597,7 @@ void CAPTree::grow( bool& break_flag , CAPTreeModel& model , State& state , size
         // if there exist at least one node for split
         // third, loop  over those splitabiliable nodes, calculate split criterion, figure out split node, var and point
         model.calculate_criterion( state , bottom_nodes_vec , node_splitability , 
-                                 split_node , split_var , split_point , splitable , criterion_values );
+                                   split_node , split_var , split_point , splitable , criterion_values );
         // split the selected node
 
         if( splitable )
@@ -571,7 +644,7 @@ void CAPTree::grow_APTree_TS( bool& break_flag , CAPTreeModel& model , State& st
         
         // if there exist at least one node for split
         // third, loop  over those splitabiliable nodes, calculate split criterion, figure out split node, var and point
-        model.calculate_criterion_APTree_TS( state , bottom_nodes_vec , 
+        model.calculate_criterion_APTree_TS(  state , bottom_nodes_vec , 
                                               node_splitability , split_node , 
                                               split_var , split_point , splitable );
         // split the selected node

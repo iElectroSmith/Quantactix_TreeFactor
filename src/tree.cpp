@@ -78,7 +78,7 @@ void CTree::pr( bool pc )
         std::cout << "tree size: " << treesize( ) << std::endl;
 
     std::cout << pad << "(id,parent): " << id << sp << pid;
-    std::cout << sp << "(v,c): " << v << sp << c;
+    std::cout << sp << "(v,c): " << var_Index << sp << rawValue;
     // std::cout << sp << "theta: " << theta;
     std::cout << sp << "type: " << ntype( );
     std::cout << sp << "depth: " << this->depth;
@@ -232,7 +232,7 @@ CTree::tree_p CTree::bn( arma::mat& x , size_t& row_ind )
     if( leftChild == 0 )
         return this;
 
-    if( x( row_ind , v ) <= c )
+    if( x( row_ind , var_Index ) <= rawValue )
     {
         return leftChild->bn( x , row_ind );
     }
@@ -267,8 +267,8 @@ void CTree::toNull( )
 
     }
 
-    v = 0;
-    c = 0;
+    var_Index = 0;
+    rawValue = 0;
     parentNode = 0;
     leftChild = 0;
     rightChild = 0;
@@ -288,8 +288,8 @@ void CTree::cp( tree_p n , tree_cp o )
         return;
     }
 
-    n->v = o->v;
-    n->c = o->c;
+    n->var_Index = o->var_Index;
+    n->rawValue = o->rawValue;
     n->theta = o->theta;
 
     if( o->leftChild )
@@ -311,8 +311,8 @@ void CTree::copy_only_root( tree_p o )
 //this function pointer new root to the OLD structure
 {
 
-    this->v = o->v;
-    this->c = o->c;
+    this->var_Index = o->var_Index;
+    this->rawValue = o->rawValue;
     this->theta = o->theta;
 
     if( o->leftChild )
@@ -415,8 +415,8 @@ std::istream& operator>>( std::istream& is , CTree& t )
     for( size_t i = 1; i != nv.size( ); i++ )
     {
         CTree::tree_p np = new CTree;
-        np->v = nv[ i ].v;
-        np->c = nv[ i ].c;
+        np->var_Index = nv[ i ].v;
+        np->rawValue = nv[ i ].c;
         np->theta = nv[ i ].theta;
         tid = nv[ i ].id;
         pts[ tid ] = np;
@@ -487,9 +487,9 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
 
         if( splitable )
         {
-            this->v = split_var;
+            this->var_Index = split_var;
             this->c_index = split_point;
-            this->c = state.split_candidates[ split_point ];
+            this->rawValue = state.split_candidates[ split_point ];
         }
         else
         {
@@ -600,8 +600,8 @@ json CTree::to_json( )
     else
     {
 
-        j[ "variable" ] = this->v;
-        j[ "cutpoint" ] = this->c;
+        j[ "variable" ] = this->var_Index;
+        j[ "cutpoint" ] = this->rawValue;
         j[ "cutpoint_index" ] = this->c_index;
         j[ "nodeid" ] = this->nid( );
         j[ "depth" ] = this->depth;
@@ -633,8 +633,8 @@ void CTree::from_json( json& j3 , size_t dim_theta )
     {
 
         // this is an intermediate node
-        j3.at( "variable" ).get_to( this->v );
-        j3.at( "cutpoint" ).get_to( this->c );
+        j3.at( "variable" ).get_to( this->var_Index );
+        j3.at( "cutpoint" ).get_to( this->rawValue );
         j3.at( "cutpoint_index" ).get_to( this->c_index );
         j3.at( "depth" ).get_to( this->depth );
 

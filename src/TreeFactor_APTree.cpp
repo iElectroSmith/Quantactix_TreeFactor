@@ -14,18 +14,35 @@
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
-Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma::mat Z , arma::mat H , 
-                                  arma::vec portfolio_weight , arma::vec loss_weight , 
-                                  arma::vec stocks , arma::vec months , arma::vec unique_months , 
-                                  arma::vec first_split_var , arma::vec second_split_var , 
-                                  size_t num_stocks , size_t num_months , size_t min_leaf_size = 100 , 
-                                  size_t max_depth = 5 , size_t num_iter = 30 , size_t num_cutpoints = 4 , 
-                                  double eta = 1.0 , bool equal_weight = false , bool no_H = false , 
-                                  bool abs_normalize = false , bool weighted_loss = false , 
-                                  bool stop_no_gain = false , double lambda_mean = 0 , double lambda_cov = 0 )
+Rcpp::List TreeFactor_APTree_cpp( arma::vec R , 
+                                  arma::vec Y , 
+                                  arma::mat X , 
+                                  arma::mat Z , 
+                                  arma::mat H , 
+                                  arma::vec portfolio_weight , 
+                                  arma::vec loss_weight , 
+                                  arma::vec stocks , 
+                                  arma::vec months , 
+                                  arma::vec unique_months , 
+                                  arma::vec first_split_var , 
+                                  arma::vec second_split_var , 
+                                  size_t num_stocks , 
+                                  size_t num_months , 
+                                  size_t min_leaf_size = 100 , 
+                                  size_t max_depth = 5 , 
+                                  size_t num_iter = 30 , 
+                                  size_t num_cutpoints = 4 , 
+                                  double eta = 1.0 , 
+                                  bool equal_weight = false , 
+                                  bool no_H = false , 
+                                  bool abs_normalize = false , 
+                                  bool weighted_loss = false , 
+                                  bool stop_no_gain = false , 
+                                  double lambda_mean = 0 , 
+                                  double lambda_cov = 0 )
 {
 
-    
+
     //std::raise(SIGTRAP)
     //Rcpp::stop("Breakpoint reached.");
     //Rcpp::browser( );
@@ -33,7 +50,7 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma
     Rcpp::Rcerr << "______Debug point reached______." << std::endl;
     std::cout<< "______Debug point reached." << std::endl; 
     printf("______Debug point reached.") ;
-    
+
     // we assume the number of months is continuous
     std::map<size_t , size_t> months_list;
     assert( num_months == unique_months.n_elem );
@@ -43,14 +60,37 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma
     for( size_t i = 0; i < num_months; i++ )
     {
         // count from zero
-        months_list[ unique_months( i ) ] = i;
+        months_list[ unique_months( i ) ] = i ;
     }
 
+
     // initialize state class to save data objects
-    State state( X , Y , R , Z , H , portfolio_weight , loss_weight , stocks , months , 
-                first_split_var , second_split_var , num_months , months_list , num_stocks , 
-                min_leaf_size , max_depth , num_cutpoints , equal_weight , no_H , 
-                abs_normalize , weighted_loss , stop_no_gain , eta , lambda_mean , lambda_cov );
+    State state( X , 
+                 Y , 
+                 R , 
+                 Z , 
+                 H , 
+                 portfolio_weight , 
+                 loss_weight , 
+                 stocks , 
+                 months , 
+                 first_split_var , 
+                 second_split_var , 
+                 num_months , 
+                 months_list , 
+                 num_stocks , 
+                 min_leaf_size , 
+                 max_depth , 
+                 num_cutpoints , 
+                 equal_weight , 
+                 no_H , 
+                 abs_normalize , 
+                 weighted_loss , 
+                 stop_no_gain , 
+                 eta , 
+                 lambda_mean , 
+                 lambda_cov );
+
 
     CAPTreeModel model( lambda_cov );
 
@@ -61,8 +101,14 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma
         Xorder.col( i ) = arma::sort_index( X.col( i ) );
     }
 
+
     // initialize tree class
-    CAPTree root( state.num_months , 1 , state.num_obs_all , 1 , 0 , &Xorder );
+    CAPTree root( state.num_months , 
+                  1 , 
+                  state.num_obs_all , 
+                  1 , 
+                  0 , 
+                  &Xorder );
 
     root.setN( X.n_rows );
 
@@ -86,6 +132,7 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R , arma::vec Y , arma::mat X , arma
 
     for( size_t iter = 0; iter < num_iter; iter++ )
     {
+
         // main function that grows the tree
         root.grow( break_flag , model , state , iter , criterion_values );
 

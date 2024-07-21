@@ -21,7 +21,7 @@ void CAPTreeModel::check_node_splitability( State& state ,
    
     //raise(SIGTRAP);  // Insert this line to trigger a breakpoint    
     
-    CAPTree::APTree_p node;
+    CAPTree::APTree_Pt node;
 
 
     
@@ -490,11 +490,24 @@ void CAPTreeModel::calculate_criterion_one_variable( State& state , size_t var ,
         }
     }
 
-    return;
+    return ;
+
+
 }
 
-void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state , size_t var , std::vector<CAPTree*>& bottom_nodes_vec , size_t node_ind , std::vector<double>& output , arma::vec& weighted_return_all , arma::vec& cumu_weight_all , arma::vec& num_stocks_all , size_t var_ind )
+
+
+void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state , 
+                                                              size_t var , 
+                                                              std::vector<CAPTree*>& bottom_nodes_vec , 
+                                                              size_t node_ind , 
+                                                              std::vector<double>& output , 
+                                                              arma::vec& weighted_return_all , 
+                                                              arma::vec& cumu_weight_all , 
+                                                              arma::vec& num_stocks_all , 
+                                                              size_t var_ind )
 {
+
     // calculate split criterion for one variable at a specific node
     CAPTree* node = bottom_nodes_vec[ node_ind ];
 
@@ -555,6 +568,7 @@ void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state , si
 
     for( size_t i = 0; i < state.num_cutpoints; i++ )
     {
+
         // reset all vectors for a new cutpoint
         weighted_return_left.fill( 0.0 );
         weighted_return_right.fill( 0.0 );
@@ -567,6 +581,7 @@ void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state , si
 
         while( ( *state.X )( ( *Xorder )( loop_index , var ) , var ) <= cutpoint )
         {
+
             // the observation is on the left side
             temp_index = ( *Xorder )( loop_index , var );
             temp_month = ( *state.months )( temp_index );
@@ -745,8 +760,8 @@ void CAPTreeModel::split_node_APTree_TS( State& state , CAPTree* node , size_t s
 
     // node->split_Xorder((*Xorder_left), (*Xorder_right), (*Xorder), split_point, split_var, state);
 
-    CAPTree::APTree_p lchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_left , node->getID( ) * 2 , node , Xorder_left );
-    CAPTree::APTree_p rchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_right , node->getID( ) * 2 + 1 , node , Xorder_right );
+    CAPTree::APTree_Pt lchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_left , node->getID( ) * 2 , node , Xorder_left );
+    CAPTree::APTree_Pt rchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_right , node->getID( ) * 2 + 1 , node , Xorder_right );
 
     node->setl( lchild );
     node->setr( rchild );
@@ -779,8 +794,8 @@ void CAPTreeModel::split_node( State& state , CAPTree* node , size_t split_var ,
 
     node->split_Xorder( ( *Xorder_left ) , ( *Xorder_right ) , ( *Xorder ) , split_point , split_var , state );
 
-    CAPTree::APTree_p lchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_left , node->getID( ) * 2 , node , Xorder_left );
-    CAPTree::APTree_p rchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_right , node->getID( ) * 2 + 1 , node , Xorder_right );
+    CAPTree::APTree_Pt lchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_left , node->getID( ) * 2 , node , Xorder_left );
+    CAPTree::APTree_Pt rchild = new CAPTree( state.num_months , node->getdepth( ) + 1 , num_obs_right , node->getID( ) * 2 + 1 , node , Xorder_right );
 
     node->setl( lchild );
     node->setr( rchild );
@@ -789,10 +804,14 @@ void CAPTreeModel::split_node( State& state , CAPTree* node , size_t split_var ,
     this->initialize_portfolio( state , rchild );
 
     return;
+
 }
+
+
 
 void CAPTreeModel::initialize_portfolio( State& state , CAPTree* node )
 {
+
     // initialize Rt at the given node
     // calculate equal weight / value weight portfolio return of a node
     size_t num_obs = ( *node->Xorder ).n_rows;
@@ -805,11 +824,12 @@ void CAPTreeModel::initialize_portfolio( State& state , CAPTree* node )
     {
         for( size_t i = 0; i < num_obs; i++ )
         {
-            row_ind = ( *node->Xorder )( i , 0 );
-            month = ( *state.months )[ row_ind ];
-            temp_month_index = state.months_list->at( month );
-            ( node->theta )[ temp_month_index ] += ( *state.R )[ row_ind ];
-            weight_sum[ temp_month_index ] = weight_sum[ temp_month_index ] + 1;
+            row_ind = ( *node->Xorder )( i , 0 ) ;
+            month   = ( *state.months )[ row_ind ] ;
+            temp_month_index = state.months_list->at( month ) ;
+            ( node->theta )[ temp_month_index ] += ( *state.R )[ row_ind ] ;
+            weight_sum[ temp_month_index ] = weight_sum[ temp_month_index ] + 1 ;
+
         }
     }
     else
@@ -817,23 +837,26 @@ void CAPTreeModel::initialize_portfolio( State& state , CAPTree* node )
         for( size_t i = 0; i < num_obs; i++ )
         {
             row_ind = ( *node->Xorder )( i , 0 );
-            month = ( *state.months )[ row_ind ];
+            month   = ( *state.months )[ row_ind ];
             temp_month_index = state.months_list->at( month );
             ( node->theta )[ temp_month_index ] += ( *state.R )[ row_ind ] * ( *state.weight )[ row_ind ];
             weight_sum[ temp_month_index ] = weight_sum[ temp_month_index ] + ( *state.weight )[ row_ind ];
         }
     }
 
+
     for( size_t i = 0; i < state.num_months; i++ )
     {
         ( node->theta )[ i ] = ( weight_sum[ i ] == 0 ) ? 0.0 : ( node->theta )[ i ] / weight_sum[ i ];
     }
 
-    return;
+    return ;
+
 }
 
 void CAPTreeModel::initialize_regressor_matrix( State& state )
 {
+
     // initialize the regressor matrix in the model class
     // used in calculating pricing error
     // pre allocate space to save computing time
@@ -841,8 +864,8 @@ void CAPTreeModel::initialize_regressor_matrix( State& state )
     // Use Y instead of R
 
     size_t num_obs = state.num_obs_all;
-    size_t num_H = ( *state.H ).n_cols;
-    size_t num_Z = ( *state.Z ).n_cols;
+    size_t num_H   = ( *state.H ).n_cols;
+    size_t num_Z   = ( *state.Z ).n_cols;
 
     if( state.no_H )
     {

@@ -63,13 +63,31 @@ public:
     size_t p_spike_slab;
 
     // state for APTree model
-    State( arma::mat& X , arma::vec& Y , arma::vec& R , arma::mat& Z , arma::mat& H , 
-           arma::vec& portfolio_weight , arma::vec& loss_weight , arma::vec& stocks , 
-           arma::vec& months , arma::vec& first_split_var , arma::vec& second_split_var , 
-           size_t& num_months , std::map<size_t , size_t>& months_list , size_t& num_stocks , 
-           size_t& min_leaf_size , size_t& max_depth , size_t& num_cutpoints , bool& equal_weight , 
-           bool& no_H , bool& abs_normalize , bool& weighted_loss , bool& stop_no_gain , 
-           double& eta , double& lambda_mean , double& lambda_cov )
+    State( arma::mat& X , 
+           arma::vec& Y , 
+           arma::vec& R , 
+           arma::mat& Z , 
+           arma::mat& H , 
+           arma::vec& portfolio_weight , 
+           arma::vec& loss_weight , 
+           arma::vec& stocks , 
+           arma::vec& months , 
+           arma::vec& first_split_var , 
+           arma::vec& second_split_var , 
+           size_t& num_months , 
+           std::map<size_t , size_t>& months_list , 
+           size_t& num_stocks , 
+           size_t& min_leaf_size , 
+           size_t& max_depth , 
+           size_t& num_cutpoints , 
+           bool& equal_weight , 
+           bool& no_H , 
+           bool& abs_normalize , 
+           bool& weighted_loss , 
+           bool& stop_no_gain , 
+           double& eta , 
+           double& lambda_mean , 
+           double& lambda_cov )
     {
 
         this->X = &X;
@@ -99,6 +117,7 @@ public:
         this->abs_normalize = abs_normalize;
         this->weighted_loss = weighted_loss;
         this->stop_no_gain = stop_no_gain;
+
         this->overall_loss = std::numeric_limits<double>::max( );
         this->sigma = 0.0;
         this->tau = 0.0;
@@ -108,6 +127,7 @@ public:
         this->num_regressors = 0;
         this->lambda_mean = lambda_mean;
         this->lambda_cov = lambda_cov;
+
         for( size_t i = 0; i < num_cutpoints; i++ )
         {
             split_candidates[ i ] = 2.0 / ( num_cutpoints + 1 ) * ( i + 1 ) - 1;
