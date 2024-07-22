@@ -44,12 +44,12 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R ,
 
 
     //std::raise(SIGTRAP)
-    //Rcpp::stop("Breakpoint reached.") ;
-    //Rcpp::browser( ) ;
-    Rcpp::Rcout << "______Debug point reached." << std::endl ; 
-    Rcpp::Rcerr << "______Debug point reached______." << std::endl ;
-    std::cout<< "______Debug point reached." << std::endl ; 
-    printf("______Debug point reached.") ;
+    //Rcpp::stop("Breakpoint reached.");
+    //Rcpp::browser( );
+    Rcpp::Rcout << "______Debug point reached." << std::endl; 
+    Rcpp::Rcerr << "______Debug point reached______." << std::endl;
+    std::cout<< "______Debug point reached." << std::endl; 
+    Rprintf("______Debug point reached.") ;
 
     // we assume the number of months is continuous
     std::map<size_t , size_t> months_list ;

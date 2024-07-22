@@ -59,7 +59,8 @@ eta = 1
 ##### load data #####
 
 #load("../../data/simu_data.rda")
-load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
+#load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
+load("D:/PKU_work/Quantactix_TreeFactor/data/simu_data.rda")
 print( names( da ) )
 
 data <- da
