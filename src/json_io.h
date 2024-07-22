@@ -6,8 +6,8 @@
 #include "APTree.h"
 #include "tree.h"
 
-json tree_to_json(CAPTree &root);
+json tree_to_json( CAPTree& root ) ;
 
-void json_to_tree(std::string &json_string, CAPTree &root);
+void json_to_tree( std::string& json_string , CAPTree& root ) ;
 
 #endif

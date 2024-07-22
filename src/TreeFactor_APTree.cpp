@@ -44,20 +44,20 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R ,
 
 
     //std::raise(SIGTRAP)
-    //Rcpp::stop("Breakpoint reached.");
-    //Rcpp::browser( );
-    Rcpp::Rcout << "______Debug point reached." << std::endl; 
-    Rcpp::Rcerr << "______Debug point reached______." << std::endl;
-    std::cout<< "______Debug point reached." << std::endl; 
+    //Rcpp::stop("Breakpoint reached.") ;
+    //Rcpp::browser( ) ;
+    Rcpp::Rcout << "______Debug point reached." << std::endl ; 
+    Rcpp::Rcerr << "______Debug point reached______." << std::endl ;
+    std::cout<< "______Debug point reached." << std::endl ; 
     printf("______Debug point reached.") ;
 
     // we assume the number of months is continuous
-    std::map<size_t , size_t> months_list;
-    assert( num_months == unique_months.n_elem );
+    std::map<size_t , size_t> months_list ;
+    assert( num_months == unique_months.n_elem ) ;
 
     // a mapping from month to index from zero to num_months - 1
     // it is not necessary to normalize months, adjust from zero in the input
-    for( size_t i = 0; i < num_months; i++ )
+    for( size_t i = 0 ; i < num_months ; i++ )
     {
         // count from zero
         months_list[ unique_months( i ) ] = i ;
@@ -89,16 +89,16 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R ,
                  stop_no_gain , 
                  eta , 
                  lambda_mean , 
-                 lambda_cov );
+                 lambda_cov ) ;
 
 
-    CAPTreeModel model( lambda_cov );
+    CAPTreeModel model( lambda_cov ) ;
 
     // calculate Xorder matrix, each index is row index of the data in the X matrix, but sorted from low to high
-    arma::umat Xorder( X.n_rows , X.n_cols , arma::fill::zeros );
-    for( size_t i = 0; i < X.n_cols; i++ )
+    arma::umat Xorder( X.n_rows , X.n_cols , arma::fill::zeros ) ;
+    for( size_t i = 0 ; i < X.n_cols ; i++ )
     {
-        Xorder.col( i ) = arma::sort_index( X.col( i ) );
+        Xorder.col( i ) = arma::sort_index( X.col( i ) ) ;
     }
 
 
@@ -108,75 +108,75 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R ,
                   state.num_obs_all , 
                   1 , 
                   0 , 
-                  &Xorder );
+                  &Xorder ) ;
 
-    root.setN( X.n_rows );
+    root.set_numData_inNode( X.n_rows ) ;
 
     // initialize the portfolio at the root node
-    model.initialize_portfolio( state , &root );
+    model.initialize_portfolio( state , &root ) ;
 
     // initialize the proper regressor matrix for the criterion
     // Rt ~ Zt * Ft + Ht
     // create a matrix of Zt * Ft + Ht
-    model.initialize_regressor_matrix( state );
+    model.initialize_regressor_matrix( state ) ;
 
-    bool break_flag = false;
+    bool break_flag = false ;
 
-    std::vector<double> criterion_values;
+    std::vector<double> criterion_values ;
 
     // out put of split criterion evaluations
     // a list (number of iters), each one has length of all possible candidates
-    Rcpp::List all_criterion = Rcpp::List::create( );
+    Rcpp::List all_criterion = Rcpp::List::create( ) ;
 
-    arma::vec temp_vec;
+    arma::vec temp_vec ;
 
-    for( size_t iter = 0; iter < num_iter; iter++ )
+    for( size_t iter = 0 ; iter < num_iter ; iter++ )
     {
 
         // main function that grows the tree
-        root.grow( break_flag , model , state , iter , criterion_values );
+        root.grow( break_flag , model , state , iter , criterion_values ) ;
 
-        temp_vec.set_size( criterion_values.size( ) );
+        temp_vec.set_size( criterion_values.size( ) ) ;
 
-        for( size_t i = 0; i < criterion_values.size( ); i++ )
+        for( size_t i = 0 ; i < criterion_values.size( ) ; i++ )
         {
-            temp_vec( i ) = criterion_values[ i ];
+            temp_vec( i ) = criterion_values[ i ] ;
         }
 
         // output vector of all split criterion for debugging
-        all_criterion.push_back( temp_vec , to_string( iter ) );
+        all_criterion.push_back( temp_vec , to_string( iter ) ) ;
 
         if( break_flag )
         {
-            break;
+            break ;
         }
     }
 
-    arma::vec leaf_node_index;
-    arma::mat all_leaf_portfolio , leaf_weight , ft;
+    arma::vec leaf_node_index ;
+    arma::mat all_leaf_portfolio , leaf_weight , ft ;
 
-    model.calculate_factor( root , leaf_node_index , all_leaf_portfolio , leaf_weight , ft , state );
+    model.calculate_factor( root , leaf_node_index , all_leaf_portfolio , leaf_weight , ft , state ) ;
 
-    cout << "fitted tree " << endl;
-    cout.precision( 3 );
-    cout << root << endl;
+    cout << "fitted tree " << endl ;
+    cout.precision( 3 ) ;
+    cout << root << endl ;
 
-    std::stringstream trees;
-    Rcpp::StringVector output_tree( 1 );
-    trees.precision( 10 );
-    trees.str( std::string( ) );
-    trees << root;
-    output_tree( 0 ) = trees.str( );
+    std::stringstream trees ;
+    Rcpp::StringVector output_tree( 1 ) ;
+    trees.precision( 10 ) ;
+    trees.str( std::string( ) ) ;
+    trees << root ;
+    output_tree( 0 ) = trees.str( ) ;
 
     // return pointer to the tree structure, cannot be restored if saving the environment in R
-    // APTree *root_pnt = &root;
-    // Rcpp::XPtr<APTree> tree_pnt(root_pnt, true);
-    Rcpp::StringVector json_output( 1 );
-    json j = tree_to_json( root );
-    json_output[ 0 ] = j.dump( 4 );
+    // APTree *root_pnt = &root ;
+    // Rcpp::XPtr<APTree> tree_pnt(root_pnt, true) ;
+    Rcpp::StringVector json_output( 1 ) ;
+    json j = tree_to_json( root ) ;
+    json_output[ 0 ] = j.dump( 4 ) ;
 
     // calculating the pricing error of the factor, run regression
-    double loss = model.calculate_R2( state , ft );
+    double loss = model.calculate_R2( state , ft ) ;
 
     return Rcpp::List::create(  Rcpp::Named( "R" ) = R ,
                                 Rcpp::Named( "X" ) = X ,
@@ -188,6 +188,6 @@ Rcpp::List TreeFactor_APTree_cpp( arma::vec R ,
                                 Rcpp::Named( "portfolio" ) = all_leaf_portfolio ,
                                 Rcpp::Named( "json" ) = json_output ,
                                 Rcpp::Named( "R2" ) = loss ,
-                                Rcpp::Named( "all_criterion" ) = all_criterion );
+                                Rcpp::Named( "all_criterion" ) = all_criterion ) ;
 
 }
