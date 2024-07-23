@@ -503,8 +503,8 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
     }
 
     // split to left and right side
-    arma::umat Xorder_left( num_obs_left , state.p ) ;
-    arma::umat Xorder_right( num_obs_right , state.p ) ;
+    arma::umat Xorder_left( num_obs_left , state.numOfCharitisc ) ;
+    arma::umat Xorder_right( num_obs_right , state.numOfCharitisc ) ;
 
     // Xorder matrix carries indexing of data in leaves
     split_Xorder( Xorder_left , Xorder_right , Xorder , split_point , split_var , state , model ) ;
@@ -537,7 +537,7 @@ void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right ,
 
     size_t left_index ;
     size_t right_index ;
-    for( size_t i = 0 ; i < state.p ; i++ )
+    for( size_t i = 0 ; i < state.numOfCharitisc ; i++ )
     {
         left_index = 0 ;
         right_index = 0 ;

@@ -35,9 +35,9 @@ public:
     size_t num_months ;
     size_t min_leaf_size ;
     size_t max_depth ;
-    size_t num_cutpoints ;
+    size_t num_cutPoints ;
     size_t num_regressors ; // for Bayes tree
-    size_t p ;              // number of charateristics
+    size_t numOfCharitisc ;              // p  //number of charateristics
     std::vector<double> split_candidates ;
     bool equal_weight ;
     bool no_H ;
@@ -108,9 +108,9 @@ public:
         this->num_stocks = num_stocks ;
         this->min_leaf_size = min_leaf_size ;
         this->max_depth = max_depth ;
-        this->num_cutpoints = num_cutpoints ;
+        this->num_cutPoints = num_cutpoints ;
         this->split_candidates.resize( num_cutpoints ) ;
-        this->p = X.n_cols ;
+        this->numOfCharitisc = X.n_cols ;
         this->num_obs_all = X.n_rows ;
         this->equal_weight = equal_weight ;
         this->no_H = no_H ;
@@ -165,9 +165,9 @@ public:
         this->num_stocks = num_stocks ;
         this->min_leaf_size = min_leaf_size ;
         this->max_depth = max_depth ;
-        this->num_cutpoints = num_cutpoints ;
+        this->num_cutPoints = num_cutpoints ;
         this->split_candidates.resize( num_cutpoints ) ;
-        this->p = X.n_cols ;
+        this->numOfCharitisc = X.n_cols ;
         this->equal_weight = equal_weight ;
         this->no_H = no_H ;
         this->abs_normalize = abs_normalize ;

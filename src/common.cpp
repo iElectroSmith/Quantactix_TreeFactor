@@ -159,7 +159,10 @@ double soft_c( double a , double lambda )
 
 }
 
-double lasso_loss( const arma::mat& X , const arma::mat& Y , const arma::vec& beta , double lambda )
+double lasso_loss( const arma::mat& X , 
+                    const arma::mat& Y , 
+                    const arma::vec& beta , 
+                    double lambda )
 {
 
     size_t n = X.n_rows ;
@@ -169,8 +172,11 @@ double lasso_loss( const arma::mat& X , const arma::mat& Y , const arma::vec& be
     return output ;
 }
 
-arma::vec lasso_fit_standardized( const arma::mat& X , const arma::mat& Y , double lambda ,
-                                  const arma::vec& beta_ini , double eps = 0.0001 )
+arma::vec lasso_fit_standardized( const arma::mat& X , 
+                                    const arma::mat& Y , 
+                                    double lambda ,
+                                    const arma::vec& beta_ini , 
+                                    double eps = 0.0001 )
 {
 
     // solve Lasso by coordinate descent method
