@@ -470,7 +470,7 @@ void CAPTree::split_Xorder( arma::umat& Xorder_left ,
 
     size_t left_index ;
     size_t right_index ;
-    for( size_t i = 0 ; i < state.p ; i++ )
+    for( size_t i = 0 ; i < state.numOfCharitisc ; i++ )
     {
         left_index = 0 ;
         right_index = 0 ;
