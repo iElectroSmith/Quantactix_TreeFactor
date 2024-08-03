@@ -103,6 +103,9 @@ m2l <- function( m )
 
 ## simulate the characteristics of assets
 
+#这个函数char生成一个100行1000列的矩阵c_matrix，其每个元素是由以下部分组成：
+#一个均匀分布在[-1, 1]之间的随机数c（在每行中重复出现）。
+#一个均值为0、标准差为0.1的正态分布随机数（独立生成的噪声）。
 c1 <- char(N,T)
 c2 <- char(N,T)
 c3 <- char(N,T)
@@ -123,12 +126,12 @@ mkt <- rnorm( n=T, mean=1/100 , sd=2/100 )
 #所以生成的矩阵的每一行对应向量mkt的一个元素。
 #注意，这里并不是转置操作，只是将向量转换为一个列矩阵。
 #如果想要明确地转置矩阵，可以使用t函数。
-mkt <- matrix( mkt , nrow = T )  #转置了
+mkt <- matrix( mkt , nrow = T )  #转置了 100行，1列
 
 
 ## simulate the market beta of assets
 
-beta <- betaF( c1 , c2 , c3 , c4 , c5 , m1 , m2 )
+beta <- betaF( c1 , c2 , c3 , c4 , c5 , m1 , m2 )  #100行 1000列
 
 
 ## simulate asset returns
@@ -137,7 +140,7 @@ r <- matrix( 0 , T , N ) # 100 * 1000 全0矩阵
 dim_xy <-dim( r )  #，r矩阵有100行和10列。通过调用dim(r)， 确认矩阵的维度是否符合预期。
 print(dim_xy)
 
-cx <- c(1:N)  # [1 : 1000]
+cx <- c( 1:N )  # [1 : 1000]
 
 for ( i in c(1:N) )
 {
@@ -156,7 +159,7 @@ for ( i in c(1:N) )
     x17<- rnorm(n=T, mean=0, sd=10/100) #生成一个正态分布的随机噪声向量，长度为T，均值为0，标准差为0.1。
     
     #表示矩阵r的第i列。
-    r[ , i ] <- beta[ , i ]*mkt + c1[ , i ]*b1 + c2[ , i ]*b2 + rnorm(n=T, mean=0, sd=10/100)
+    r[ , i ] <- beta[ , i ]*mkt + c1[ , i ]*b1 + c2[ , i ]*b2 + rnorm( n=T , mean=0 , sd=10/100 )
     
 }
 
@@ -167,17 +170,17 @@ for ( i in c(1:N) )
 
 da <- data.frame(
 
-      xret = m2l(r),  # 将矩阵 r 转换为向量
+      xret = m2l( r ) ,  # 将矩阵 r 转换为向量
       
       #ceiling函数的作用是将小数部分舍去，并将整数部分加1，除非它本身是整数
       # 这生成了一个长度为N*T的向量，其中每个整数重复N次，从1到T
       # ceiling(1:(N*T)/N)生成了一个id列，它的作用是为每一组N个观测值分配一个ID，使得数据框中每N个观测值共享一个ID
       id   = ceiling(1:(N*T)/N), #生成一个从1到T重复N次的整数序列，
-      
-      date = rep(c(1:T),N), #创建一个日期变量，通过rep(c(1:T), N)生成，它的长度也是N*T，表示每个观测值的日期。
-      mkt  = rep(mkt,N), #创建一个市场变量，通过rep(mkt, N)生成，它的长度为N*T
-      m1   = rep(m1,N),  #长度为N*T
-      m2   = rep(m2,N),  #长度为N*T
+                                 #第一个1000是1， 第二个1000是2，……第100一个1000是1000  
+      date = rep(c(1:T),N), #1到100重复1000次，创建一个日期变量，通过rep(c(1:T), N)生成，它的长度也是N*T，表示每个观测值的日期。
+      mkt  = rep(mkt,N), #重复1000次，创建一个市场变量，通过rep(mkt, N)生成，它的长度为N*T
+      m1   = rep(m1,N),  #重复1000次，长度为N*T
+      m2   = rep(m2,N),  #重复1000次，长度为1000*100 重复1000次
       
       c1   = m2l(c1),
       c2   = m2l(c2),
@@ -188,9 +191,10 @@ da <- data.frame(
 )
 
 
-f  = as.matrix( cbind( mkt ) )
-xt = as.matrix( cbind( m1 , m2 ) )
-save(da, f, xt, beta, file = "simu_data.rda")
+f  = as.matrix( cbind( mkt ) )      #转置了 100行，1列
+xt = as.matrix( cbind( m1 , m2 ) )  #转置了 100行，2列
+save( da , f , xt , beta , file = "simu_data.rda" )
+
 
 
 

@@ -92,14 +92,15 @@ eta = 1
 ##### load data #####
 
 #load("../../data/simu_data.rda")
-#load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
-load("D:/PKU_work/Quantactix_TreeFactor/data/simu_data.rda")
+load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
+#load("D:/PKU_work/Quantactix_TreeFactor/data/simu_data.rda")
 
 #print(names(da))打印数据框da的列名，以便查看其结构。
 print( names( da ) )
 
 data <- da # 将da数据框赋值给data，即data是da的副本。
 data['lag_me'] = 1 #在data中添加一列名为lag_me的列，所有行的值都设置为1。
+print( names( da ) )
 
 #这行代码从data中选择特定的列并创建一个新的数据框tmp。所选的列包括：
 #'id'：可能是标识符列。
@@ -140,8 +141,9 @@ second_split_var_boosting = c(1:5)-1
 #逻辑表达式，筛选 date 列中的值，使其在 start 和 split 之间（包括 start 和 split）
 #data 使用逻辑表达式作为索引，筛选出符合条件的行
 #data1 包含 data 中所有 date 列的值在 start 和 split 之间（包括 start 和 split）的行
+#取date为1~80之间的数 总共80000个
 data1 <- data[ (data[ , c('date')]>=start ) & ( data[ , c('date')]<=split) ,  ]
-
+#取date为81~100之间的数，总共20000个
 #data2 包含 data 中所有 date 列的值在 split 和 end 之间（包括 end 但不包括 split）的行
 data2 <- data[ (data[ , c('date')]>split ) & ( data[ , c('date')]<=end ) , ]
 
@@ -154,39 +156,39 @@ data2 <- data[ (data[ , c('date')]>split ) & ( data[ , c('date')]<=end ) , ]
 #并计算出唯一月份和股票的数量，为提升步骤的训练准备数据。
 
 #从数据框 data1 中提取 splitting_chars 中指定的列，作为训练数据的特征变量 X_train
-X_train = data1[,splitting_chars] 
+X_train = data1[,splitting_chars]   #splitting_chars为 C1,C2,C3,C4,C5
 #从数据框 data1 中提取 xret 列，作为训练数据的响应变量 R_train。
-R_train = data1[,c("xret")]
+R_train = data1[,c("xret")]  
 
 # 将 data1 中的 date 列转换为因子（factor）
 #将因子转换为数值型变量。结果是每个日期对应一个唯一的整数值
-months_train = as.numeric(as.factor(data1[,c("date")]))
+months_train = as.numeric(as.factor(data1[,c("date")]))  #1~80 重复1000次
 #将所有整数值减1，使月份从0开始。
-months_train = months_train - 1 # start from 0
+months_train = months_train - 1 # start from 0   #0~79 重复1000次
 
 #将 data1 中的 id 列转换为因子。
 #因子转换为数值型变量。结果是每个股票ID对应一个唯一的整数值
 #将所有整数值减1，使股票ID从0开始
-stocks_train = as.numeric(as.factor(data1[,c("id")])) - 1
+stocks_train = as.numeric(as.factor(data1[,c("id")])) - 1  #全为0了，1::80000个
 
 #从数据框 data1 中提取 instruments 中指定的列，作为训练数据的协变量 Z_train。
-Z_train = data1[, instruments]
+Z_train = data1[, instruments]   #instruments  C1,C2,C3,C4,C5
 # 在 Z_train 的第一列添加常数项1，用于线性模型的截距项
-Z_train = cbind(1, Z_train)
+Z_train = cbind(1, Z_train)  # 第一列变为全 1
 
 #数据框 data1 中提取 lag_me 列，作为训练数据的组合权重 portfolio_weight_train
-portfolio_weight_train = data1[,c("lag_me")]
+portfolio_weight_train = data1[,c("lag_me")]  #全为1了，1::80000个
 
 #从数据框 data1 中提取 lag_me 列，作为训练数据的损失权重 loss_weight_train。
-loss_weight_train = data1[,c("lag_me")]
+loss_weight_train = data1[,c("lag_me")]   #全为1了，1::80000个
 
 #提取 months_train 向量中的唯一值
 #计算唯一值的数量，即月份的数量 num_months。
-num_months = length(unique(months_train))
+num_months = length(unique(months_train))  #80
 
 #提取 stocks_train 向量中的唯一值。
 #计算唯一值的数量，即股票的数量 num_stocks
-num_stocks = length(unique(stocks_train))
+num_stocks = length(unique(stocks_train))  #100
 
 
 ###### train data 1 #####
@@ -194,16 +196,16 @@ num_stocks = length(unique(stocks_train))
 # the first H is the mkt 表示第一个变量 H 是市场变量（mkt）。
 
 #数据框 data1 中提取 xret 列，作为第一阶段训练数据的响应变量 Y_train1。
-Y_train1 = data1[,c("xret")]
+Y_train1 = data1[,c("xret")]  #取了xret列
 #从数据框 data1 中提取 mkt 列，作为第一阶段训练数据的市场变量 H_train1。
-H_train1 = data1[,c("mkt")]
+H_train1 = data1[,c("mkt")]   #取了mkt列
 
 #对市场变量 H_train1 和协变量 Z_train 进行逐元素相乘。
 #这里，H_train1 是一个向量，Z_train 是一个矩阵。
 #相乘的结果是一个矩阵，每个元素是 H_train1 中对应元素
 #和 Z_train 中对应元素的乘积。
 #这个操作通常用在模型中，用于引入交互效应或构建新特征。
-H_train1 = H_train1 * Z_train
+H_train1 = H_train1 * Z_train   #80000行，第一列全1， 后面是C1,C2,C3,C4,C5 
 
 # train 1 
 t = proc.time()
@@ -217,8 +219,8 @@ t = proc.time()
 #loss_weight_train：从 data1 中提取的 lag_me 列，作为损失权重。
 #stocks_train：将 data1 中 id 列转换为因子并减去1的结果，用于表示股票的索引。
 #months_train：将 data1 中 date 列转换为因子并减去1的结果，用于表示月份的索引。
-#first_split_var：定义第一个分裂变量的索引向量。
-#second_split_var：定义第二个分裂变量的索引向量。
+#first_split_var：定义第一个分裂变量的索引向量。0 1 2 3 4 
+#second_split_var：定义第二个分裂变量的索引向量。 。0 1 2 3 4 
 #num_stocks：唯一股票的数量。
 #num_months：唯一月份的数量。
 #min_leaf_size：树的最小叶节点大小。
