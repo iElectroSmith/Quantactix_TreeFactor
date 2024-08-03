@@ -12,7 +12,7 @@ library(ranger)
 #H：额外的回归变量矩阵。
 #months：一个索引向量，用于选择fit$ft中的月份。
 #no_H：一个布尔值，决定是否使用H矩阵。
-tf_residual = function(fit,Y,Z,H,months,no_H)
+tf_residual = function( fit , Y , Z , H , months , no_H )
 {
 
   # Tree Factor Models
@@ -57,6 +57,10 @@ tf_residual = function(fit,Y,Z,H,months,no_H)
 
 }
 
+
+
+################################################################################
+################################################################################
 ###### parameters #####
 
 start = 1
@@ -80,6 +84,9 @@ nu = 1 #学习率或步长，通常用于梯度提升方法中
 # penalty for the sigma (sigma + lambda I)^{-1} * mu
 lambda = 1e-4
 eta = 1
+
+
+
 
 
 ##### load data #####
@@ -255,6 +262,7 @@ params <- list(
     stop_no_gain = stop_no_gain
 )
 
+
 # 将参数列表写入文件
 saveRDS(params, "./params.rds")
 
@@ -269,6 +277,8 @@ write_mat <- function(mat, filename) {
     filepath <- file.path("params", filename)
     write.table(mat, file = filepath, row.names = FALSE, col.names = FALSE)
 }
+
+
 
 # 写入向量和矩阵到文件
 write_vec(R_train, "R_train.txt")
@@ -341,10 +351,12 @@ sum((insPred1$ft - fit1$ft)^2)
 #打印模型 fit1 的 R² 值，用于衡量模型的拟合优度
 print(fit1$R2)
 
+
 # residual 1
 #计算模型 fit1 的残差。传入的参数包括响应变量 Y_train1、协变量 Z_train、
 #市场变量 H_train1、月份索引 months_train 和布尔值 no_H。
 res1 = tf_residual(fit1,Y_train1,Z_train,H_train1,months_train,no_H)
+
 
 # beta
 #fit1$ft[months_train + 1]: 根据月份索引 months_train 获取 fit1 的 ft 分量，
@@ -352,12 +364,19 @@ res1 = tf_residual(fit1,Y_train1,Z_train,H_train1,months_train,no_H)
 #将 fit1 的 ft 分量与协变量 Z_train 逐元素相乘。
 #将结果转换为矩阵，存储在变量 x 中
 x <- as.matrix(fit1$ft[months_train+1]*Z_train)
+
 #将响应变量转换为矩阵，存储在变量 y 中
 y <- as.matrix(Y_train1)
+
 #计算 beta 系数的估计值 beta_bf1，这是普通最小二乘法（OLS）估计的一部分。
 beta_bf1 = solve(t(x)%*%x)%*%t(x)%*%y
 # print(beta_bf1)
 
+
+
+
+################################################################################
+################################################################################
 ###### train data 2 #####
 # the first H is the mkt
 Y_train2 = res1
@@ -386,6 +405,10 @@ y <- as.matrix(Y_train2)
 beta_bf2 = solve(t(x)%*%x)%*%t(x)%*%y
 # print(beta_bf2)
 
+
+
+################################################################################
+################################################################################
 ############# Train Period tf2 #############
 
 ###### test data #####
@@ -404,6 +427,9 @@ loss_weight_test = data2[,c("lag_me")]
 
 rm(data2)
 
+
+################################################################################
+################################################################################
 ############# Test Period Factors #############
 
 pred1 = predict(fit1, X_test, R_test, months_test, portfolio_weight_test)
@@ -422,6 +448,9 @@ print(mean(wsdf)/sd(wsdf)*sqrt(length(wsdf)))
 print("####### 1/N ########")
 
 
+
+################################################################################
+################################################################################
 # ############# START OUTPUT #############
 
 # tf_train <- cbind(fit1$ft, fit2$ft)
@@ -453,3 +482,4 @@ print("####### 1/N ########")
 # write.csv(data.frame(pred2$portfolio), paste0(case,"_portfolio_pred2",".csv"))
 
 # ############# END OUTPUT #############
+

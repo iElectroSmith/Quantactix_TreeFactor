@@ -10,6 +10,10 @@
 
 # parameters
 
+
+#set.seed(123) 在 R 中的作用是设置随机数生成器的种子，以确保结果的可重复性。
+#具体来说，当你运行涉及随机数生成的代码时（例如使用 rnorm()、runif() 等函数），
+#通过设置相同的种子，你可以保证每次运行代码时都会得到相同的随机数序列。
 set.seed( 20220215 )
 # set.seed(89)
 
@@ -92,6 +96,9 @@ m2l <- function( m )
 
 ## function that reshape matrix into a stacked list
 
+
+################################################################################
+################################################################################
 # simulation
 
 ## simulate the characteristics of assets
@@ -129,7 +136,9 @@ beta <- betaF( c1 , c2 , c3 , c4 , c5 , m1 , m2 )
 r <- matrix( 0 , T , N ) # 100 * 1000 全0矩阵 
 dim_xy <-dim( r )  #，r矩阵有100行和10列。通过调用dim(r)， 确认矩阵的维度是否符合预期。
 print(dim_xy)
+
 cx <- c(1:N)  # [1 : 1000]
+
 for ( i in c(1:N) )
 {
     
@@ -139,16 +148,19 @@ for ( i in c(1:N) )
     x12 <- beta[ , i ] *mkt  #表示矩阵beta的第i列与向量mkt的按元素乘积。
     
     x13 <- c1[ , i ]
-    x14 <- c1[ , i ]*b1 #表示矩阵c1的第i列与向量b1的按元素乘积。
+    x14 <- c1[ , i ]*b1   #表示矩阵c1的第i列与向量b1的按元素乘积。
     
     x15 <- c2[ , i ]
-    x16 <- c2[ , i ]*b2 #表示矩阵c2的第i列与向量b2的按元素乘积
+    x16 <- c2[ , i ]*b2   #表示矩阵c2的第i列与向量b2的按元素乘积
 
     x17<- rnorm(n=T, mean=0, sd=10/100) #生成一个正态分布的随机噪声向量，长度为T，均值为0，标准差为0.1。
     
     #表示矩阵r的第i列。
-    r[,i] <- beta[ , i ]*mkt + c1[ , i ]*b1 + c2[ , i ]*b2 + rnorm(n=T, mean=0, sd=10/100)
+    r[ , i ] <- beta[ , i ]*mkt + c1[ , i ]*b1 + c2[ , i ]*b2 + rnorm(n=T, mean=0, sd=10/100)
+    
 }
+
+
 
 # save
 ## stack data and save as rda
@@ -164,8 +176,8 @@ da <- data.frame(
       
       date = rep(c(1:T),N), #创建一个日期变量，通过rep(c(1:T), N)生成，它的长度也是N*T，表示每个观测值的日期。
       mkt  = rep(mkt,N), #创建一个市场变量，通过rep(mkt, N)生成，它的长度为N*T
-      m1   = rep(m1,N), #长度为N*T
-      m2   = rep(m2,N), #长度为N*T
+      m1   = rep(m1,N),  #长度为N*T
+      m2   = rep(m2,N),  #长度为N*T
       
       c1   = m2l(c1),
       c2   = m2l(c2),
@@ -175,8 +187,10 @@ da <- data.frame(
       
 )
 
+
 f  = as.matrix( cbind( mkt ) )
 xt = as.matrix( cbind( m1 , m2 ) )
 save(da, f, xt, beta, file = "simu_data.rda")
+
 
 
