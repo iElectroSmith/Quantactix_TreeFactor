@@ -162,10 +162,10 @@ void CTree::getnogs( npv& nv )
 {
 
     if( leftChild )
-    { 
+    {
         //have children
         if( ( leftChild->leftChild ) || ( rightChild->leftChild ) )
-        { 
+        {
             //have grandchildren
             if( leftChild->leftChild )
                 leftChild->getnogs( nv ) ;
@@ -293,7 +293,7 @@ void CTree::cp( tree_p n , tree_cp o )
     n->theta = o->theta ;
 
     if( o->leftChild )
-    { 
+    {
         //if o has children
         n->leftChild = new CTree ;
         ( n->leftChild )->parentNode = n ;
@@ -482,8 +482,8 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
     {
 
         // split
-        model.calculate_criterion( state , Xorder , split_var , split_point , 
-                                    num_obs_left , num_obs_right , this , splitable ) ;
+        model.calculate_criterion( state , Xorder , split_var , split_point ,
+            num_obs_left , num_obs_right , this , splitable ) ;
 
         if( splitable )
         {
@@ -526,9 +526,9 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
 
 }
 
-void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right , 
-                         arma::umat& Xorder , size_t split_point , size_t split_var , 
-                         State& state , CModel& model )
+void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right ,
+    arma::umat& Xorder , size_t split_point , size_t split_var ,
+    State& state , CModel& model )
 {
 
     size_t num_obs = Xorder.n_rows ;

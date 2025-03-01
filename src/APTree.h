@@ -26,60 +26,60 @@ public:
     arma::umat* Xorder ;
 
     // constructors
-    CAPTree( ) : theta( 1 , 0.0 ) , 
-                 Xorder( 0 ) , 
-                 m_numData_inNode( 0 ) , 
-                 m_nodeID( 1 ) , 
-                 m_varIndex2Split( 0 ) , 
-                 m_valueIndex2Split( 0 ) , 
-                 m_rawValue2Split( 0.0 ) , 
-                 m_treeDepth( 0 ) , 
-                 m_parentNode( 0 ) , 
-                 m_leftChild( 0 ) , 
-                 m_rightChild( 0 ) , 
+    CAPTree( ) : theta( 1 , 0.0 ) ,
+                 Xorder( 0 ) ,
+                 m_numData_inNode( 0 ) ,
+                 m_nodeID( 1 ) ,
+                 m_varIndex2Split( 0 ) ,
+                 m_valueIndex2Split( 0 ) ,
+                 m_rawValue2Split( 0.0 ) ,
+                 m_treeDepth( 0 ) ,
+                 m_parentNode( 0 ) ,
+                 m_leftChild( 0 ) ,
+                 m_rightChild( 0 ) ,
                  iter( 0 ) { }
 
-    CAPTree( size_t dim_theta ) : theta( dim_theta , 0.0 ) , 
-                                  Xorder( 0 ) , 
-                                  m_numData_inNode( 0 ) , 
-                                  m_nodeID( 1 ) , 
-                                  m_varIndex2Split( 0 ) , 
-                                  m_valueIndex2Split( 0 ) , 
-                                  m_rawValue2Split( 0.0 ) , 
-                                  m_treeDepth( 0 ) , 
-                                  m_parentNode( 0 ) , 
-                                  m_leftChild( 0 ) , 
-                                  m_rightChild( 0 ) , 
+    CAPTree( size_t dim_theta ) : theta( dim_theta , 0.0 ) ,
+                                  Xorder( 0 ) ,
+                                  m_numData_inNode( 0 ) ,
+                                  m_nodeID( 1 ) ,
+                                  m_varIndex2Split( 0 ) ,
+                                  m_valueIndex2Split( 0 ) ,
+                                  m_rawValue2Split( 0.0 ) ,
+                                  m_treeDepth( 0 ) ,
+                                  m_parentNode( 0 ) ,
+                                  m_leftChild( 0 ) ,
+                                  m_rightChild( 0 ) ,
                                   iter( 0 ) { }
-    
-    CAPTree( size_t dim_theta , arma::umat* Xordermat ) : theta( dim_theta , 0.0 ) , 
-                                                          Xorder( Xordermat ) , 
-                                                          m_numData_inNode( 0 ) , 
-                                                          m_nodeID( 1 ) , 
-                                                          m_varIndex2Split( 0 ) , 
-                                                          m_valueIndex2Split( 0 ) , 
-                                                          m_rawValue2Split( 0.0 ) , 
-                                                          m_treeDepth( 0 ) , 
-                                                          m_parentNode( 0 ) , 
-                                                          m_leftChild( 0 ) , 
-                                                          m_rightChild( 0 ) , 
+
+    CAPTree( size_t dim_theta , arma::umat* Xordermat ) : theta( dim_theta , 0.0 ) ,
+                                                          Xorder( Xordermat ) ,
+                                                          m_numData_inNode( 0 ) ,
+                                                          m_nodeID( 1 ) ,
+                                                          m_varIndex2Split( 0 ) ,
+                                                          m_valueIndex2Split( 0 ) ,
+                                                          m_rawValue2Split( 0.0 ) ,
+                                                          m_treeDepth( 0 ) ,
+                                                          m_parentNode( 0 ) ,
+                                                          m_leftChild( 0 ) ,
+                                                          m_rightChild( 0 ) ,
                                                           iter( 0 ) { }
     CAPTree( size_t dim_theta ,   //state.num_months
-             size_t depth ,       // 1 , 
-             size_t N ,           //state.num_obs_all  
+             size_t depth ,       // 1 ,
+             size_t N ,           //state.num_obs_all
              size_t ID ,          //1 ,
              APTree_Pt p ,         //0 ,
-             arma::umat* Xordermat ) : theta( dim_theta , 0.0 ) , 
-                                       Xorder( Xordermat ) , 
-                                       m_numData_inNode( N ) , 
-                                       m_nodeID( ID ) , 
-                                       m_varIndex2Split( 0 ) , 
-                                       m_valueIndex2Split( 0 ) , 
-                                       m_rawValue2Split( 0.0 ) , 
-                                       m_treeDepth( depth ) , 
-                                       m_parentNode( p ) , 
-                                       m_leftChild( 0 ) , 
-                                       m_rightChild( 0 ) , 
+             arma::umat* Xordermat ) : theta( dim_theta , 0.0 ) ,
+                                       Xorder( Xordermat ) ,
+                                       m_numData_inNode( N ) ,
+                                       m_nodeID( ID ) ,
+                                       m_varIndex2Split( 0 ) ,
+                                       m_valueIndex2Split( 0 ) ,
+                                       m_rawValue2Split( 0.0 ) ,
+                                       m_treeDepth( depth ) ,
+                                       m_parentNode( p ) ,
+                                       m_leftChild( 0 ) ,
+                                       m_rightChild( 0 ) ,
                                        iter( 0 ) { }
 
 
@@ -126,7 +126,7 @@ public:
     void get_AllNodes_const( vec_APTree_cnstPt& v ) const ;              // get ALL nodes (const)
     APTree_Pt get_pt2TopNode( ) ;                              // get pointer to the top node (root node) of the tree
     APTree_Pt findBtmNodeOfData( arma::mat& x , size_t& row_index ) ; // search tree, find bottom node of the data
-    
+
     size_t nid( ) const ;                           // nid of the node
     char nodeType( ) ;                                 // node type, t:top, b:bot, n:no grandchildren, i:interior (t can be b) ;
     bool isNoGrandChildren( ) ;
@@ -134,22 +134,22 @@ public:
     void copy_only_root( APTree_Pt o ) ;  // copy tree, point new root to old structure
     friend std::istream& operator>>( std::istream& , CAPTree& ) ;
 
-    void split_Xorder( arma::umat& Xorder_left , 
-                       arma::umat& Xorder_right , 
-                       arma::umat& Xorder , 
-                       size_t split_point , 
-                       size_t split_var , 
+    void split_Xorder( arma::umat& Xorder_left ,
+                       arma::umat& Xorder_right ,
+                       arma::umat& Xorder ,
+                       size_t split_point ,
+                       size_t split_var ,
                        State& state ) ;
     void predict( arma::mat X , arma::vec months , arma::vec& output ) ;
 
-    void grow( bool& break_flag , 
-               CAPTreeModel& model , 
-               State& state , 
-               size_t& iter , 
+    void grow( bool& break_flag ,
+               CAPTreeModel& model ,
+               State& state ,
+               size_t& iter ,
                std::vector<double>& criterion_values ) ;
 
     void grow_APTree_TS( bool& break_flag , CAPTreeModel& model , State& state ) ;
- 
+
     // input and output to json
     json to_json( ) ;
     void from_json( json& j3 , size_t dim_theta ) ;

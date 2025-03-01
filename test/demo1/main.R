@@ -92,15 +92,15 @@ eta = 1
 ##### load data #####
 
 #load("../../data/simu_data.rda")
-load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
-#load("D:/PKU_work/Quantactix_TreeFactor/data/simu_data.rda")
+#load("E:/GitHub/Quantactix_TreeFactor/data/simu_data.rda")
+load("D:/PKU_work/Quantactix_TreeFactor/data/simu_data.rda")
 
 #print(names(da))打印数据框da的列名，以便查看其结构。
 print( names( da ) )
 
 data <- da # 将da数据框赋值给data，即data是da的副本。
 data['lag_me'] = 1 #在data中添加一列名为lag_me的列，所有行的值都设置为1。
-print( names( da ) )
+print( names( data ) )
 
 #这行代码从data中选择特定的列并创建一个新的数据框tmp。所选的列包括：
 #'id'：可能是标识符列。
@@ -119,6 +119,7 @@ tmp = data[, c('id', 'date','xret','lag_me',
 data = tmp  #将tmp赋值回data，即data现在只包含所选的列。
 rm( tmp ) #删除tmp变量，释放内存
 rm( da )
+print( names( data ) )
 
 # chars
 
@@ -147,6 +148,7 @@ data1 <- data[ (data[ , c('date')]>=start ) & ( data[ , c('date')]<=split) ,  ]
 #data2 包含 data 中所有 date 列的值在 split 和 end 之间（包括 end 但不包括 split）的行
 data2 <- data[ (data[ , c('date')]>split ) & ( data[ , c('date')]<=end ) , ]
 
+print( names( data1 ) )
 
 # rm(data)
 
@@ -309,6 +311,7 @@ write.table(no_H, file.path("params", "no_H.txt"), row.names = FALSE, col.names 
 write.table(abs_normalize, file.path("params", "abs_normalize.txt"), row.names = FALSE, col.names = FALSE)
 write.table(weighted_loss, file.path("params", "weighted_loss.txt"), row.names = FALSE, col.names = FALSE)
 write.table(stop_no_gain, file.path("params", "stop_no_gain.txt"), row.names = FALSE, col.names = FALSE)
+
 write.table(lambda_mean, file.path("params", "lambda_mean.txt"), row.names = FALSE, col.names = FALSE)
 write.table(lambda_cov, file.path("params", "lambda_cov.txt"), row.names = FALSE, col.names = FALSE)
 

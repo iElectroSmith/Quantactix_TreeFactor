@@ -31,7 +31,7 @@ CAPTree::APTree_Pt CAPTree::get_pt2ParentByNodeID( size_t nid )
     APTree_Pt rp = m_rightChild->get_pt2ParentByNodeID( nid ) ;
     if( rp )
         return rp ; //found on right
-    
+
     return 0 ;      //never found it
 
 }
@@ -129,12 +129,12 @@ size_t CAPTree::numNoGrandChildsNodes( )
         return 0 ; //bottom node
 
     if( m_leftChild->m_leftChild || m_rightChild->m_leftChild )
-    {   
+    {
         //not a nog
         return ( m_leftChild->numNoGrandChildsNodes( ) + m_rightChild->numNoGrandChildsNodes( ) ) ;
     }
     else
-    { 
+    {
         //is a nog
         return 1 ;
     }
@@ -174,10 +174,10 @@ void CAPTree::getNoGrandChildsNodes( vec_APTree_Pt& nv )
 {
 
     if( m_leftChild )
-    { 
+    {
         //have children
         if( ( m_leftChild->m_leftChild ) || ( m_rightChild->m_leftChild ) )
-        { 
+        {
             //have grandchildren
             if( m_leftChild->m_leftChild )
                 m_leftChild->getNoGrandChildsNodes( nv ) ;
@@ -262,7 +262,7 @@ void CAPTree::toNull( )
 
     //loop invariant: ts>=1
     while( ts > 1 )
-    { 
+    {
         //if false ts=1
         vec_APTree_Pt nv ;
         getNoGrandChildsNodes( nv ) ;
@@ -307,7 +307,7 @@ void CAPTree::copyTree( APTree_Pt n , APTree_cnstPt o )
     n->theta = o->theta ;
 
     if( o->m_leftChild )
-    { 
+    {
         //if o has children
         n->m_leftChild = new CAPTree ;
         ( n->m_leftChild )->m_parentNode = n ;
@@ -385,9 +385,9 @@ std::ostream& operator<<( std::ostream& os , const CAPTree& APTree )
         //     // os << " " << nds[i]->getRt(j) ;
         // }
         os << std::endl ;
-    
+
     }
-    
+
     return os ;
 }
 
@@ -456,11 +456,11 @@ std::istream& operator>>( std::istream& is , CAPTree& AP_tree )
 
 }
 
-void CAPTree::split_Xorder( arma::umat& Xorder_left , 
-                            arma::umat& Xorder_right , 
-                            arma::umat& Xorder , 
-                            size_t split_point , 
-                            size_t split_var , 
+void CAPTree::split_Xorder( arma::umat& Xorder_left ,
+                            arma::umat& Xorder_right ,
+                            arma::umat& Xorder ,
+                            size_t split_point ,
+                            size_t split_var ,
                             State& state )
 {
 
@@ -506,7 +506,7 @@ json CAPTree::to_json( )
 {
 
     json j ;
-    
+
     if( m_leftChild == 0 )
     {
         j = this->theta ;
@@ -569,11 +569,11 @@ void CAPTree::from_json( json& j3 , size_t dim_theta )
 
 }
 
-  
-void CAPTree::grow( bool& break_flag , 
-                    CAPTreeModel& model , 
-                    State& state , 
-                    size_t& iter , 
+
+void CAPTree::grow( bool& break_flag ,
+                    CAPTreeModel& model ,
+                    State& state ,
+                    size_t& iter ,
                     std::vector<double>& criterion_values )
 {
 
@@ -596,16 +596,16 @@ void CAPTree::grow( bool& break_flag ,
 
     if( sum( node_splitability ) )
     {
-        
+
         // if there exist at least one node for split
         // third, loop  over those splitabiliable nodes, calculate split criterion, figure out split node, var and point
-        model.calculate_criterion( state , 
-                                   bottom_nodes_vec , 
-                                   node_splitability , 
-                                   split_node , 
-                                   split_var , 
-                                   split_point , 
-                                   splitable , 
+        model.calculate_criterion( state ,
+                                   bottom_nodes_vec ,
+                                   node_splitability ,
+                                   split_node ,
+                                   split_var ,
+                                   split_point ,
+                                   splitable ,
                                    criterion_values ) ;
         // split the selected node
 
@@ -647,28 +647,28 @@ void CAPTree::grow_APTree_TS( bool& break_flag , CAPTreeModel& model , State& st
 
     // second, check splitability, 1 for splitable, 0 for terminated
     node_splitability.resize( bottom_nodes_vec.size( ) ) ;
-    model.check_node_splitability( state , 
-                                   bottom_nodes_vec , 
+    model.check_node_splitability( state ,
+                                   bottom_nodes_vec ,
                                    node_splitability ) ;
 
     if( sum( node_splitability ) )
     {
-        
+
         // if there exist at least one node for split
         // third, loop  over those splitabiliable nodes, calculate split criterion, figure out split node, var and point
-        model.calculate_criterion_APTree_TS(  state , 
-                                              bottom_nodes_vec , 
-                                              node_splitability , 
-                                              split_node , 
-                                              split_var , 
-                                              split_point , 
+        model.calculate_criterion_APTree_TS(  state ,
+                                              bottom_nodes_vec ,
+                                              node_splitability ,
+                                              split_node ,
+                                              split_var ,
+                                              split_point ,
                                               splitable ) ;
         // split the selected node
         if( splitable )
         {
-            model.split_node_APTree_TS( state , 
-                                        bottom_nodes_vec[ split_node ] , 
-                                        split_var , 
+            model.split_node_APTree_TS( state ,
+                                        bottom_nodes_vec[ split_node ] ,
+                                        split_var ,
                                         split_point ) ;
         }
         else
@@ -676,7 +676,7 @@ void CAPTree::grow_APTree_TS( bool& break_flag , CAPTreeModel& model , State& st
             cout << "break of no good candidate" << endl ;
             break_flag = true ;
         }
-        
+
     }
     else
     {

@@ -14,17 +14,16 @@
 ////////////////////////////
 
 void CAPTreeModel::check_node_splitability( State& state ,
-                                            std::vector<CAPTree*>& vec_bottom_nodes ,
-                                            std::vector<bool>& vec_node_splitability )
+    std::vector<CAPTree*>& vec_bottom_nodes ,
+    std::vector<bool>& vec_node_splitability )
 {
-   
-   
-    //raise(SIGTRAP) ;  // Insert this line to trigger a breakpoint    
-    
+
+
+    //raise(SIGTRAP) ;  // Insert this line to trigger a breakpoint
+
     CAPTree::APTree_Pt node ;
 
 
- 
     // check node depth and number of data observations
     for( size_t i = 0 ; i < vec_bottom_nodes.size( ) ; i++ )
     {
@@ -47,14 +46,14 @@ void CAPTreeModel::check_node_splitability( State& state ,
     return ;
 }
 
-void CAPTreeModel::calculate_criterion( State& state , 
-                                       std::vector<CAPTree*>& vec_bottom_nodes , 
-                                       std::vector<bool>& vec_node_splitability , 
-                                       size_t& split_node , 
-                                       size_t& split_var , 
-                                       size_t& split_point , 
-                                       bool& splitable , 
-                                       std::vector<double>& vec_criterion_values )
+void CAPTreeModel::calculate_criterion( State& state ,
+                                        std::vector<CAPTree*>& vec_bottom_nodes ,
+                                        std::vector<bool>& vec_node_splitability ,
+                                        size_t& split_node ,
+                                        size_t& split_var ,
+                                        size_t& split_point ,
+                                        bool& splitable ,
+                                        std::vector<double>& vec_criterion_values )
 {
 
     size_t num_btmNodes = vec_bottom_nodes.size( ) ;
@@ -64,9 +63,9 @@ void CAPTreeModel::calculate_criterion( State& state ,
     // initialized at infinity
     // the first num_cutpoints * p is for the first node, etc
     vec_criterion_values.resize( num_btmNodes * num_candidates ) ;
-    std::fill( vec_criterion_values.begin( ) , 
-               vec_criterion_values.end( ) , 
-               std::numeric_limits<double>::max( ) ) ;
+    std::fill( vec_criterion_values.begin( ) ,
+        vec_criterion_values.end( ) ,
+        std::numeric_limits<double>::max( ) ) ;
     // std::vector<double> criterion_values(num_nodes * num_candidates, std::numeric_limits<double>::max()) ;
 
     // temp_vector stores criterion evaluation of ONE variable
@@ -93,11 +92,11 @@ void CAPTreeModel::calculate_criterion( State& state ,
         {
             // this node is splitable, checkout split candidates
             // calculate sufficient statistics for a node
-            node_sufficient_stat( state , 
-                                  *( vec_bottom_nodes[ i ]->Xorder ) , 
-                                  weighted_return_all , 
-                                  cumu_weight_all , 
-                                  num_stocks_all ) ;
+            node_sufficient_stat( state ,
+                                *( vec_bottom_nodes[ i ]->Xorder ) ,
+                                weighted_return_all ,
+                                cumu_weight_all ,
+                                num_stocks_all ) ;
 
             if( vec_bottom_nodes[ i ]->get_treeDepth( ) == 1 )
             {
@@ -107,15 +106,15 @@ void CAPTreeModel::calculate_criterion( State& state ,
                 {
 
                     // loop over variables, note the constraint on variables for the root
-                    temp_index = ( size_t ) ( *state.first_split_var )( var ) ;
+                    temp_index = ( size_t )( *state.first_split_var )( var ) ;
 
-                    this->calculate_criterion_one_variable( state , 
-                                                            temp_index , 
-                                                            vec_bottom_nodes , 
-                                                            i , 
-                                                            temp_vector , 
-                                                            weighted_return_all , 
-                                                            cumu_weight_all , 
+                    this->calculate_criterion_one_variable( state ,
+                                                            temp_index ,
+                                                            vec_bottom_nodes ,
+                                                            i ,
+                                                            temp_vector ,
+                                                            weighted_return_all ,
+                                                            cumu_weight_all ,
                                                             num_stocks_all ) ;
                     for( size_t ind = 0 ; ind < state.num_cutPoints ; ind++ )
                     {
@@ -132,15 +131,15 @@ void CAPTreeModel::calculate_criterion( State& state ,
                 {
 
                     // loop over variables, note the constraint on variables for depth 2
-                    temp_index = ( size_t ) ( *state.second_split_var )( var ) ;
+                    temp_index = ( size_t )( *state.second_split_var )( var ) ;
 
-                    this->calculate_criterion_one_variable( state , 
-                                                            temp_index , 
-                                                            vec_bottom_nodes , 
-                                                            i , 
-                                                            temp_vector , 
-                                                            weighted_return_all , 
-                                                            cumu_weight_all , 
+                    this->calculate_criterion_one_variable( state ,
+                                                            temp_index ,
+                                                            vec_bottom_nodes ,
+                                                            i ,
+                                                            temp_vector ,
+                                                            weighted_return_all ,
+                                                            cumu_weight_all ,
                                                             num_stocks_all ) ;
 
                     for( size_t ind = 0 ; ind < state.num_cutPoints ; ind++ )
@@ -157,13 +156,13 @@ void CAPTreeModel::calculate_criterion( State& state ,
                 for( size_t var = 0 ; var < state.numOfCharitisc ; var++ )
                 {
                     // loop over variables, there is no constraint, loop over all variables
-                    this->calculate_criterion_one_variable( state , 
-                                                            var , 
-                                                            vec_bottom_nodes , 
-                                                            i , 
-                                                            temp_vector , 
-                                                            weighted_return_all , 
-                                                            cumu_weight_all , 
+                    this->calculate_criterion_one_variable( state ,
+                                                            var ,
+                                                            vec_bottom_nodes ,
+                                                            i ,
+                                                            temp_vector ,
+                                                            weighted_return_all ,
+                                                            cumu_weight_all ,
                                                             num_stocks_all ) ;
 
                     for( size_t ind = 0 ; ind < state.num_cutPoints ; ind++ )
@@ -204,9 +203,9 @@ void CAPTreeModel::calculate_criterion( State& state ,
     // restore corresponding index of node, cutpoint variable and data index
     size_t temp2 ;
 
-    split_node  = lowest_index / num_candidates ;
-    temp2       = lowest_index % num_candidates ;
-    split_var   = temp2 / state.num_cutPoints ;
+    split_node = lowest_index / num_candidates ;
+    temp2 = lowest_index % num_candidates ;
+    split_var = temp2 / state.num_cutPoints ;
     split_point = temp2 % state.num_cutPoints ;
 
     return ;
@@ -214,13 +213,13 @@ void CAPTreeModel::calculate_criterion( State& state ,
 }
 
 
-void CAPTreeModel::calculate_criterion_APTree_TS( State& state , 
-                                                  std::vector<CAPTree*>& vec_bottom_nodes , 
-                                                  std::vector<bool>& vec_node_splitability , 
-                                                  size_t& split_node , 
-                                                  size_t& split_var , 
-                                                  size_t& split_point , 
-                                                  bool& splitable )
+void CAPTreeModel::calculate_criterion_APTree_TS( State& state ,
+                                                    std::vector<CAPTree*>& vec_bottom_nodes ,
+                                                    std::vector<bool>& vec_node_splitability ,
+                                                    size_t& split_node ,
+                                                    size_t& split_var ,
+                                                    size_t& split_point ,
+                                                    bool& splitable )
 {
 
 
@@ -251,25 +250,25 @@ void CAPTreeModel::calculate_criterion_APTree_TS( State& state ,
             // this node is splitable, checkout split candidates
             // calculate sufficient statistics for a node
 
-            node_sufficient_stat( state , 
-                                  *( vec_bottom_nodes[ i ]->Xorder ) , 
-                                  weighted_return_all , 
-                                  cumu_weight_all , 
-                                  num_stocks_all ) ;
+            node_sufficient_stat( state ,
+                *( vec_bottom_nodes[ i ]->Xorder ) ,
+                weighted_return_all ,
+                cumu_weight_all ,
+                num_stocks_all ) ;
 
             // depth 1, root
             for( size_t var = 0 ; var < state.first_split_mat->n_cols ; var++ )
             {
                 // loop over variables
-                temp_index = ( size_t ) ( *state.first_split_var )( var ) ;
-                this->calculate_criterion_one_variable_APTree_TS( state , 
-                                                                    temp_index , 
-                                                                    vec_bottom_nodes , 
-                                                                    i , 
-                                                                    temp_vector , 
-                                                                    weighted_return_all , 
-                                                                    cumu_weight_all , 
-                                                                    num_stocks_all , 
+                temp_index = ( size_t )( *state.first_split_var )( var ) ;
+                this->calculate_criterion_one_variable_APTree_TS( state ,
+                                                                    temp_index ,
+                                                                    vec_bottom_nodes ,
+                                                                    i ,
+                                                                    temp_vector ,
+                                                                    weighted_return_all ,
+                                                                    cumu_weight_all ,
+                                                                    num_stocks_all ,
                                                                     var ) ;
                 for( size_t ind = 0 ; ind < state.num_cutPoints ; ind++ )
                 {
@@ -312,11 +311,11 @@ void CAPTreeModel::calculate_criterion_APTree_TS( State& state ,
 }
 
 
-void CAPTreeModel::node_sufficient_stat( State& state , 
-                                        arma::umat& Xorder , 
-                                        arma::vec& weighted_return_all , 
-                                        arma::vec& cumu_weight_all , 
-                                        arma::vec& num_stocks_all )
+void CAPTreeModel::node_sufficient_stat( State& state ,
+    arma::umat& Xorder ,
+    arma::vec& weighted_return_all ,
+    arma::vec& cumu_weight_all ,
+    arma::vec& num_stocks_all )
 {
 
     // This function create basis portfolio for the node
@@ -340,21 +339,21 @@ void CAPTreeModel::node_sufficient_stat( State& state ,
         temp_month = ( *state.months )( temp_index ) ;
         temp_month_index = state.months_list->at( temp_month ) ;
         weighted_return_all( temp_month_index ) += ( *state.R )( temp_index ) * ( *state.weight )( temp_index ) ;
-        cumu_weight_all( temp_month_index )     += ( *state.weight )( temp_index ) ;
-        num_stocks_all( temp_month_index )      += 1.0 ;
+        cumu_weight_all( temp_month_index ) += ( *state.weight )( temp_index ) ;
+        num_stocks_all( temp_month_index ) += 1.0 ;
     }
 
     return ;
 }
 
-void CAPTreeModel::calculate_criterion_one_variable( State& state , 
-                                                     size_t var , 
-                                                     std::vector<CAPTree*>& vec_bottom_nodes , 
-                                                     size_t node_ind , 
-                                                     std::vector<double>& vec_output , 
-                                                     arma::vec& weighted_return_all , 
-                                                     arma::vec& cumu_weight_all , 
-                                                     arma::vec& num_stocks_all )
+void CAPTreeModel::calculate_criterion_one_variable( State& state ,
+    size_t var ,
+    std::vector<CAPTree*>& vec_bottom_nodes ,
+    size_t node_ind ,
+    std::vector<double>& vec_output ,
+    arma::vec& weighted_return_all ,
+    arma::vec& cumu_weight_all ,
+    arma::vec& num_stocks_all )
 {
 
     // calculate split criterion for one variable at a specific node
@@ -569,15 +568,15 @@ void CAPTreeModel::calculate_criterion_one_variable( State& state ,
 
 
 
-void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state , 
-                                                              size_t var , 
-                                                              std::vector<CAPTree*>& vec_bottom_nodes , 
-                                                              size_t node_ind , 
-                                                              std::vector<double>& vec_output , 
-                                                              arma::vec& weighted_return_all , 
-                                                              arma::vec& cumu_weight_all , 
-                                                              arma::vec& num_stocks_all , 
-                                                              size_t var_ind )
+void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state ,
+                                                                size_t var ,
+                                                                std::vector<CAPTree*>& vec_bottom_nodes ,
+                                                                size_t node_ind ,
+                                                                std::vector<double>& vec_output ,
+                                                                arma::vec& weighted_return_all ,
+                                                                arma::vec& cumu_weight_all ,
+                                                                arma::vec& num_stocks_all ,
+                                                                size_t var_ind )
 {
 
     // calculate split criterion for one variable at a specific node
@@ -799,10 +798,10 @@ void CAPTreeModel::calculate_criterion_one_variable_APTree_TS( State& state ,
     return ;
 }
 
-void CAPTreeModel::split_node_APTree_TS( State& state , 
-                                         CAPTree* pAPTreeNode , 
-                                         size_t split_var , 
-                                         size_t split_point )
+void CAPTreeModel::split_node_APTree_TS( State& state ,
+                                        CAPTree* pAPTreeNode ,
+                                        size_t split_var ,
+                                        size_t split_point )
 {
     // first, figure out how many are on the left side and right side
     arma::umat* Xorder = pAPTreeNode->Xorder ;
@@ -847,10 +846,10 @@ void CAPTreeModel::split_node_APTree_TS( State& state ,
     return ;
 }
 
-void CAPTreeModel::split_node( State& state , 
-                               CAPTree* pAPTreeNode , 
-                               size_t split_var , 
-                               size_t split_point )
+void CAPTreeModel::split_node( State& state ,
+                                CAPTree* pAPTreeNode ,
+                                size_t split_var ,
+                                size_t split_point )
 {
     // first, figure out how many are on the left side and right side
     arma::umat* Xorder = pAPTreeNode->Xorder ;
@@ -903,7 +902,7 @@ void CAPTreeModel::initialize_portfolio( State& state , CAPTree* pAPTreeNode )
         for( size_t i = 0 ; i < num_obs ; i++ )
         {
             row_ind = ( *pAPTreeNode->Xorder )( i , 0 ) ;
-            month   = ( *state.months )[ row_ind ] ;
+            month = ( *state.months )[ row_ind ] ;
             temp_month_index = state.months_list->at( month ) ;
             ( pAPTreeNode->theta )[ temp_month_index ] += ( *state.R )[ row_ind ] ;
             vec_weight_sum[ temp_month_index ] = vec_weight_sum[ temp_month_index ] + 1 ;
@@ -915,7 +914,7 @@ void CAPTreeModel::initialize_portfolio( State& state , CAPTree* pAPTreeNode )
         for( size_t i = 0 ; i < num_obs ; i++ )
         {
             row_ind = ( *pAPTreeNode->Xorder )( i , 0 ) ;
-            month   = ( *state.months )[ row_ind ] ;
+            month = ( *state.months )[ row_ind ] ;
             temp_month_index = state.months_list->at( month ) ;
             ( pAPTreeNode->theta )[ temp_month_index ] += ( *state.R )[ row_ind ] * ( *state.weight )[ row_ind ] ;
             vec_weight_sum[ temp_month_index ] = vec_weight_sum[ temp_month_index ] + ( *state.weight )[ row_ind ] ;
@@ -942,8 +941,8 @@ void CAPTreeModel::initialize_regressor_matrix( State& state )
     // Use Y instead of R
 
     size_t num_obs = state.num_obs_all ;
-    size_t num_H   = ( *state.H ).n_cols ;
-    size_t num_Z   = ( *state.Z ).n_cols ;
+    size_t num_H = ( *state.H ).n_cols ;
+    size_t num_Z = ( *state.Z ).n_cols ;
 
     if( state.no_H )
     {
@@ -968,10 +967,10 @@ void CAPTreeModel::initialize_regressor_matrix( State& state )
     return ;
 }
 
-void CAPTreeModel::predict_AP( arma::mat& X , 
-                               CAPTree& root , 
-                               arma::vec& months , 
-                               arma::vec& leaf_index )
+void CAPTreeModel::predict_AP( arma::mat& X ,
+    CAPTree& root ,
+    arma::vec& months ,
+    arma::vec& leaf_index )
 {
 
     CAPTree* leaf ;
@@ -981,18 +980,18 @@ void CAPTreeModel::predict_AP( arma::mat& X ,
         leaf = root.findBtmNodeOfData( X , i ) ;
         leaf_index( i ) = leaf->nid( ) ;
     }
-    
+
     return ;
 
 }
 
 
-void CAPTreeModel::calculate_factor( CAPTree& root , 
-                                     arma::vec& leaf_node_index , 
-                                     arma::mat& all_leaf_portfolio , 
-                                     arma::mat& leaf_weight , 
-                                     arma::mat& ft , 
-                                     State& state )
+void CAPTreeModel::calculate_factor( CAPTree& root ,
+    arma::vec& leaf_node_index ,
+    arma::mat& all_leaf_portfolio ,
+    arma::mat& leaf_weight ,
+    arma::mat& ft ,
+    State& state )
 {
 
     std::vector<CAPTree*> vec_bottom_nodes ;
