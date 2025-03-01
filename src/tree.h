@@ -104,27 +104,27 @@ public:
 
     // tree operation functions
     void toNull( ) ;                              // delete the tree
-    tree_p getptr( size_t nid ) ;                  // get node pointer from node ID, 0 if not there ;
+    tree_p getPtr( size_t nid ) ;                  // get node pointer from node ID, 0 if not there ;
     void pr( bool pc = true ) ;                    // to screen, pc is "print child"
-    size_t treesize( ) ;                          // return number of nodes in the tree
-    size_t nnogs( ) ;                             // number of nog (no grandchildren nodes)
-    size_t nbots( ) ;                             // number of leaf nodes
-    void getbots( npv& v ) ;                       // return a vector of bottom nodes
-    void getnogs( npv& v ) ;                       // get nog nodes
-    void getnodes( npv& v ) ;                      // get ALL nodes
-    void getnodes( cnpv& v ) const ;               // get ALL nodes (const)
-    tree_p gettop( ) ;                            // get pointer to the top node (root node) of the tree
-    tree_p bn( arma::mat& x , size_t& row_index ) ; // search tree, find bottom node of the data
-    size_t nid( ) const ;                         // nid of the node
-    char ntype( ) ;                               // node type, t:top, b:bot, n:no grandchildren, i:interior (t can be b) ;
-    bool isnog( ) ;
-    void cp( tree_p n , tree_cp o ) ;  // copy tree from o to n
+    size_t treeSize( ) ;                          // return number of nodes in the tree
+    size_t numOfnogs( ) ;                             // number of nog (no grandchildren nodes)
+    size_t numOfbots( ) ;                             // number of leaf nodes
+    void getBots( npv& v ) ;                       // return a vector of bottom nodes
+    void getNogs( npv& v ) ;                       // get nog nodes
+    void getNodes( npv& v ) ;                      // get ALL nodes
+    void getNodes( cnpv& v ) const ;               // get ALL nodes (const)
+    tree_p getTop( ) ;                            // get pointer to the top node (root node) of the tree
+    tree_p ptr2Bottom( arma::mat& x , size_t& row_index ) ; // search tree, find bottom node of the data
+    size_t nodeID( ) const ;                         // nid of the node
+    char nodeType( ) ;                               // node type, t:top, b:bot, n:no grandchildren, i:interior (t can be b) ;
+    bool isNog( ) ;
+    void copyTree2Tree( tree_p n , tree_cp o ) ;  // copy tree from o to n
     void copy_only_root( tree_p o ) ; // copy tree, point new root to old structure
     friend std::istream& operator>>( std::istream& , CTree& ) ;
 
     // growing functions
-    void grow( State& state , CModel& model , arma::umat& Xorder ) ;
-    void split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right , arma::umat& Xorder , size_t split_point , size_t split_var , State& state , CModel& model ) ;
+    void grow( CState& state , CModel& model , arma::umat& Xorder ) ;
+    void split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right , arma::umat& Xorder , size_t split_point , size_t split_var , CState& state , CModel& model ) ;
     void predict( arma::mat X , arma::vec months , arma::vec& output ) ;
 
     // input and output to json

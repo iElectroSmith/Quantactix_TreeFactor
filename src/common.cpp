@@ -79,41 +79,95 @@ std::ostream& operator<<( std::ostream& out , const std::vector<std::vector<size
 
 }
 
+//函数 fastLm 接受两个参数 y 和 X，分别表示响应变量向量和预测变量矩阵。
+//函数返回一个 double 类型的值，即残差平方和
+/*
+该函数 fastLm 主要用于计算 OLS 回归模型的残差平方和。
+它通过求解线性方程组得到回归系数，计算残差，并最终返回残差的平方和。以下是该函数的步骤总结：
+
+计算回归系数 coef。
+计算残差 resid。
+计算残差方差 sig2 和回归系数的标准误差 stderrest。
+计算并返回残差的平方和 output。
+*/
+//fastLm: Fast Linear Model（快速线性模型计算）
 double fastLm( const arma::vec& y , const arma::mat& X )
 {
 
+
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT("  "  );
+
     // this function calculate sum of residual squares for OLS
+    //获取样本数和预测变量的数量：n 表示样本数，k 表示预测变量的数量。
     size_t n = X.n_rows ;
     size_t k = X.n_cols ;
 
+    //使用 Armadillo 的 solve 函数计算回归系数 coef，相当于 coef = (X^T * X)^(-1) * X^T * y。
+	// 用于解线性方程组。它可以用来求解形如 AX=B 的方程，
+	// 其中 A 是系数矩阵，X 是未知数向量（或矩阵），B 是已知数向量（或矩阵）
     arma::colvec coef = arma::solve( X , y ) ;
+
+    //计算残差 resid，即实际值 y 与预测值 X * coef 之间的差。
     arma::colvec resid = y - X * coef ;
 
+    //计算残差方差 sig2，即残差的平方和除以自由度 n - k。
     double sig2 = arma::as_scalar( arma::trans( resid ) * resid / ( n - k ) ) ;
+    
+    //计算回归系数的标准误差 stderrest。
+    //arma::diagvec 函数提取协方差矩阵的对角线元素，arma::inv 函数计算矩阵的逆。
     arma::colvec stderrest = arma::sqrt( sig2 * arma::diagvec( arma::inv( arma::trans( X ) * X ) ) ) ;
 
+    //计算残差的平方 temp，并使用 arma::accu 函数求和得到 output。
     arma::colvec temp = arma::pow( resid , 2 ) ;
-
     double output = arma::accu( temp ) ;
+
     return output ;
 
 }
 
+/*
+该函数 fastLm_weighted 主要用于计算带权重的 OLS 回归模型的加权残差平方和。
+通过求解线性方程组得到回归系数，计算残差，并对残差的平方与权重向量逐元素相乘，
+最终返回加权残差平方和。以下是该函数的步骤总结：
+
+计算回归系数 coef。
+计算残差 resid。
+计算残差方差 sig2 和回归系数的标准误差 stderrest。
+计算加权残差的平方 temp。
+返回加权残差平方和 output。
+*/
+//三个参数 y、X 和 weight，分别表示响应变量向量、预测变量矩阵和权重向量。
+//函数返回一个 double 类型的值，即加权残差平方和
+//fastLm_weighted: Fast Weighted Linear Model（快速加权线性模型计算）
 double fastLm_weighted( const arma::vec& y , const arma::mat& X , const arma::vec& weight )
 {
 
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT("  "  );
+
     // this function calculate sum of residual squares for OLS
+    //获取样本数和预测变量的数量：n 表示样本数，k 表示预测变量的数量。
     size_t n = X.n_rows ;
     size_t k = X.n_cols ;
 
+    //使用 Armadillo 的 solve 函数计算回归系数 coef，相当于 coef = (X^T * X)^(-1) * X^T * y
+    //计算残差 resid，即实际值 y 与预测值 X * coef 之间的差。
     arma::colvec coef = arma::solve( X , y ) ;
     arma::colvec resid = y - X * coef ;
 
+    //计算残差方差 sig2，即残差的平方和除以自由度 n - k。
     double sig2 = arma::as_scalar( arma::trans( resid ) * resid / ( n - k ) ) ;
+    //计算回归系数的标准误差 stderrest。
+    //arma::diagvec 函数提取协方差矩阵的对角线元素，arma::inv 函数计算矩阵的逆。
     arma::colvec stderrest = arma::sqrt( sig2 * arma::diagvec( arma::inv( arma::trans( X ) * X ) ) ) ;
 
+    //计算残差的平方 temp，并使用元素逐一相乘操作 % 与权重向量 weight 相乘。
+    // 与前者的差别： 对残差的平方进行加权求和：arma::colvec temp = arma::pow(resid, 2) % weight，
     arma::colvec temp = arma::pow( resid , 2 ) % weight ;
-
+    //计算并返回加权残差平方和：
     double output = arma::accu( temp ) ;
 
     return output ;
@@ -244,3 +298,103 @@ void int_to_bin( size_t num , std::vector<size_t>& s )
 }
 
 
+#include <sstream>
+
+
+void printMat(const arma::mat& m , size_t start_row  , size_t start_col , 
+                                   size_t num_rows  , size_t num_cols   ) 
+{
+
+    DEBUG_PRINT_SPACE;
+	
+    std::ostringstream oss;
+	
+ // 设置固定的浮点数格式和精度
+    oss << std::fixed << std::setprecision( 6 );
+	
+    // 打印矩阵的内存地址
+    oss << "Matrix address: " << &m << "\n";
+	
+	
+  // 检查行列范围是否有效
+    if (start_row >= m.n_rows || start_col >= m.n_cols) 
+	{
+        oss << "Invalid start index.";
+        return   ;
+    }
+
+	  // 如果 num_rows 或 num_cols 为 0 或超过矩阵范围，则打印到矩阵末尾
+    if (num_rows == 0 || start_row + num_rows > m.n_rows) 
+	{
+        num_rows = m.n_rows - start_row;
+    }
+    if (num_cols == 0 || start_col + num_cols > m.n_cols) 
+	{
+        num_cols = m.n_cols - start_col;
+    }
+
+  // 打印指定范围的元素
+    for (size_t i = start_row; i < start_row + num_rows; ++i) 
+	{
+        for (size_t j = start_col; j < start_col + num_cols; ++j) 
+		{
+            oss << std::setw(15) << m(i, j) << "\t";
+        }
+        oss << "\n";
+    }
+	
+    std::string matStr = oss.str();
+	
+	std::cout << matStr << std::endl;	
+	
+}
+
+void printMat(const arma::umat& m , size_t start_row  , size_t start_col , 
+                                   size_t num_rows  , size_t num_cols   ) 							   
+{
+	
+    DEBUG_PRINT_SPACE;
+
+	 // 将 umat 转换为 mat
+    arma::mat M = arma::conv_to<arma::mat>::from( m );
+	
+	printMat( M ,   start_row  ,   start_col ,  num_rows  ,   num_cols ) ;
+	
+}
+
+void  printVec(const arma::vec& v , size_t start , size_t length  ) 
+{
+    
+    DEBUG_PRINT_SPACE;
+
+    std::ostringstream oss;
+	
+ // 设置固定的浮点数格式和精度
+    oss << std::fixed << std::setprecision( 6 );
+	
+
+    // 打印向量的内存地址
+    oss << "Vector address: " << &v << "\n";
+	
+
+    // 如果 length 为 0 或超过向量长度，则使用向量的剩余长度
+    if (length == 0 || start + length > v.n_elem) {
+        length = v.n_elem - start;
+    }	
+	
+    // 检查起始索引是否有效
+    if (start >= v.n_elem) {
+        oss << "Invalid start index.";
+        return  ;
+    } 
+	
+	for (size_t i = start; i < start + length; ++i) 
+	{	
+        oss << std::setw(15)<<  v(i) << "\n";
+	}
+    
+	std::string vecStr = oss.str();
+	
+	std::cout << vecStr << std::endl;	
+	
+}

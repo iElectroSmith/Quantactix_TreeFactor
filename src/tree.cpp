@@ -2,48 +2,48 @@
 #include <chrono>
 #include <ctime>
 
-size_t CTree::nid( ) const
+size_t CTree::nodeID( ) const
 {
 
     if( !parentNode )
         return 1 ; //if you don't have a parent, you are the top
 
     if( this == parentNode->leftChild )
-        return 2 * ( parentNode->nid( ) ) ; //if you are a left child
+        return 2 * ( parentNode->nodeID( ) ) ; //if you are a left child
     else
-        return 2 * ( parentNode->nid( ) ) + 1 ; //else you are a right child
+        return 2 * ( parentNode->nodeID( ) ) + 1 ; //else you are a right child
 
 }
 
-CTree::tree_p CTree::getptr( size_t nid )
+CTree::tree_p CTree::getPtr( size_t nid )
 {
 
-    if( this->nid( ) == nid )
+    if( this->nodeID( ) == nid )
         return this ; //found it
 
     if( leftChild == 0 )
         return 0 ; //no children, did not find it
 
-    tree_p lp = leftChild->getptr( nid ) ;
+    tree_p lp = leftChild->getPtr( nid ) ;
     if( lp )
         return lp ; //found on left
 
-    tree_p rp = rightChild->getptr( nid ) ;
+    tree_p rp = rightChild->getPtr( nid ) ;
     if( rp )
         return rp ; //found on right
 
     return 0 ;      //never found it
 }
 
-size_t CTree::treesize( )
+size_t CTree::treeSize( )
 {
     if( leftChild == 0 )
         return 1 ; //if bottom node, tree size is 1
     else
-        return ( 1 + leftChild->treesize( ) + rightChild->treesize( ) ) ;
+        return ( 1 + leftChild->treeSize( ) + rightChild->treeSize( ) ) ;
 }
 
-char CTree::ntype( )
+char CTree::nodeType( )
 {
     //t:top, b:bottom, n:no grandchildren, i:internal
     if( !parentNode )
@@ -63,24 +63,24 @@ void CTree::pr( bool pc )
 {
 
     size_t d = this->depth ;
-    size_t id = nid( ) ;
+    size_t id = nodeID( ) ;
     size_t pid ;
 
     if( !parentNode )
         pid = 0 ; //parent of top node
     else
-        pid = parentNode->nid( ) ;
+        pid = parentNode->nodeID( ) ;
 
     std::string pad( 2 * d , ' ' ) ;
     std::string sp( ", " ) ;
 
-    if( pc && ( ntype( ) == 't' ) )
-        std::cout << "tree size: " << treesize( ) << std::endl ;
+    if( pc && ( nodeType( ) == 't' ) )
+        std::cout << "tree size: " << treeSize( ) << std::endl ;
 
     std::cout << pad << "(id,parent): " << id << sp << pid ;
     std::cout << sp << "(v,c): " << var_Index << sp << rawValue ;
     // std::cout << sp << "theta: " << theta ;
-    std::cout << sp << "type: " << ntype( ) ;
+    std::cout << sp << "type: " << nodeType( ) ;
     std::cout << sp << "depth: " << this->depth ;
     std::cout << sp << "pointer: " << this << std::endl ;
 
@@ -95,7 +95,7 @@ void CTree::pr( bool pc )
 
 }
 
-bool CTree::isnog( )
+bool CTree::isNog( )
 {
 
     bool isnog = true ;
@@ -114,7 +114,7 @@ bool CTree::isnog( )
 
 }
 
-size_t CTree::nnogs( )
+size_t CTree::numOfnogs( )
 {
 
     if( !leftChild )
@@ -122,7 +122,7 @@ size_t CTree::nnogs( )
 
     if( leftChild->leftChild || rightChild->leftChild )
     { //not a nog
-        return ( leftChild->nnogs( ) + rightChild->nnogs( ) ) ;
+        return ( leftChild->numOfnogs( ) + rightChild->numOfnogs( ) ) ;
     }
     else
     { //is a nog
@@ -131,7 +131,7 @@ size_t CTree::nnogs( )
 
 }
 
-size_t CTree::nbots( )
+size_t CTree::numOfbots( )
 {
     if( leftChild == 0 )
     { //if a bottom node
@@ -139,17 +139,17 @@ size_t CTree::nbots( )
     }
     else
     {
-        return leftChild->nbots( ) + rightChild->nbots( ) ;
+        return leftChild->numOfbots( ) + rightChild->numOfbots( ) ;
     }
 }
 
-void CTree::getbots( npv& bv )
+void CTree::getBots( npv& bv )
 {
 
     if( leftChild )
     { //have children
-        leftChild->getbots( bv ) ;
-        rightChild->getbots( bv ) ;
+        leftChild->getBots( bv ) ;
+        rightChild->getBots( bv ) ;
     }
     else
     {
@@ -158,20 +158,20 @@ void CTree::getbots( npv& bv )
 
 }
 
-void CTree::getnogs( npv& nv )
+void CTree::getNogs( npv& nv )
 {
 
     if( leftChild )
-    {
+    { 
         //have children
         if( ( leftChild->leftChild ) || ( rightChild->leftChild ) )
-        {
+        { 
             //have grandchildren
             if( leftChild->leftChild )
-                leftChild->getnogs( nv ) ;
+                leftChild->getNogs( nv ) ;
 
             if( rightChild->leftChild )
-                rightChild->getnogs( nv ) ;
+                rightChild->getNogs( nv ) ;
         }
         else
         {
@@ -182,7 +182,7 @@ void CTree::getnogs( npv& nv )
 
 }
 
-CTree::tree_p CTree::gettop( )
+CTree::tree_p CTree::getTop( )
 {
 
     if( !parentNode )
@@ -191,39 +191,39 @@ CTree::tree_p CTree::gettop( )
     }
     else
     {
-        return parentNode->gettop( ) ;
+        return parentNode->getTop( ) ;
     }
 
 }
 
-void CTree::getnodes( npv& v )
+void CTree::getNodes( npv& v )
 {
 
     v.push_back( this ) ;
 
     if( leftChild )
     {
-        leftChild->getnodes( v ) ;
-        rightChild->getnodes( v ) ;
+        leftChild->getNodes( v ) ;
+        rightChild->getNodes( v ) ;
     }
 
 }
 
-void CTree::getnodes( cnpv& v ) const
+void CTree::getNodes( cnpv& v ) const
 {
 
     v.push_back( this ) ;
 
     if( leftChild )
     {
-        leftChild->getnodes( v ) ;
-        rightChild->getnodes( v ) ;
+        leftChild->getNodes( v ) ;
+        rightChild->getNodes( v ) ;
     }
 
 }
 
 
-CTree::tree_p CTree::bn( arma::mat& x , size_t& row_ind )
+CTree::tree_p CTree::ptr2Bottom( arma::mat& x , size_t& row_ind )
 {
 
     // v is variable to split, c is raw value
@@ -234,11 +234,11 @@ CTree::tree_p CTree::bn( arma::mat& x , size_t& row_ind )
 
     if( x( row_ind , var_Index ) <= rawValue )
     {
-        return leftChild->bn( x , row_ind ) ;
+        return leftChild->ptr2Bottom( x , row_ind ) ;
     }
     else
     {
-        return rightChild->bn( x , row_ind ) ;
+        return rightChild->ptr2Bottom( x , row_ind ) ;
     }
 
 }
@@ -246,14 +246,14 @@ CTree::tree_p CTree::bn( arma::mat& x , size_t& row_ind )
 void CTree::toNull( )
 {
 
-    size_t tree_size = treesize( ) ;
+    size_t tree_size = treeSize( ) ;
     //loop invariant: ts>=1
 
     while( tree_size > 1 )
     {
         //if false ts=1
         npv nv ;
-        getnogs( nv ) ;
+        getNogs( nv ) ;
 
         for( size_t i = 0 ; i < nv.size( ) ; i++ )
         {
@@ -263,7 +263,7 @@ void CTree::toNull( )
             nv[ i ]->rightChild = 0 ;
         }
 
-        tree_size = treesize( ) ; //make invariant true
+        tree_size = treeSize( ) ; //make invariant true
 
     }
 
@@ -276,7 +276,7 @@ void CTree::toNull( )
 }
 
 //copy tree tree o to tree n
-void CTree::cp( tree_p n , tree_cp o )
+void CTree::copyTree2Tree( tree_p n , tree_cp o )
 //assume n has no children (so we don't have to kill them)
 //recursion down
 // create a new copy of tree in NEW memory space
@@ -293,14 +293,14 @@ void CTree::cp( tree_p n , tree_cp o )
     n->theta = o->theta ;
 
     if( o->leftChild )
-    {
+    { 
         //if o has children
         n->leftChild = new CTree ;
         ( n->leftChild )->parentNode = n ;
-        cp( n->leftChild , o->leftChild ) ;
+        copyTree2Tree( n->leftChild , o->leftChild ) ;
         n->rightChild = new CTree ;
         ( n->rightChild )->parentNode = n ;
-        cp( n->rightChild , o->rightChild ) ;
+        copyTree2Tree( n->rightChild , o->rightChild ) ;
     }
 
 }
@@ -341,7 +341,7 @@ CTree& CTree::operator=( const CTree& rhs )
     if( &rhs != this )
     {
         toNull( ) ;       //kill left hand side (this)
-        cp( this , &rhs ) ; //copy right hand side to left hand side
+        copyTree2Tree( this , &rhs ) ; //copy right hand side to left hand side
     }
     return *this ;
 }
@@ -351,14 +351,14 @@ std::ostream& operator<<( std::ostream& os , const CTree& t )
 
     CTree::cnpv nds ;
 
-    t.getnodes( nds ) ;
+    t.getNodes( nds ) ;
     os << nds.size( ) << std::endl ;
     size_t theta_length = nds[ 0 ]->getthetasize( ) ;
 
     // cout << "theta length is " << theta_length << endl ;
     for( size_t i = 0 ; i < nds.size( ) ; i++ )
     {
-        os << nds[ i ]->nid( ) << " " ;
+        os << nds[ i ]->nodeID( ) << " " ;
         os << nds[ i ]->getv( ) << " " ;
         os << nds[ i ]->getc( ) << " " ;
         os << nds[ i ]->getc_index( ) << " " ;
@@ -397,7 +397,7 @@ std::istream& operator>>( std::istream& is , CTree& t )
     std::vector<node_info> nv( nn ) ;
     for( size_t i = 0 ; i != nn ; i++ )
     {
-        is >> nv[ i ].id >> nv[ i ].v >> nv[ i ].c >> nv[ i ].theta[ 0 ] ; // Only works on first theta for now, fix latex if needed
+        is >> nv[ i ].id >> nv[ i ].var >> nv[ i ].cutPoint >> nv[ i ].vec_theta[ 0 ] ; // Only works on first theta for now, fix latex if needed
         if( !is )
         {
             return is ;
@@ -406,18 +406,18 @@ std::istream& operator>>( std::istream& is , CTree& t )
 
     //first node has to be the top one
     pts[ 1 ] = &t ; //be careful! this is not the first pts, it is pointer of id 1.
-    t.setv( nv[ 0 ].v ) ;
-    t.setc( nv[ 0 ].c ) ;
-    t.settheta( nv[ 0 ].theta ) ;
+    t.setv( nv[ 0 ].var ) ;
+    t.setc( nv[ 0 ].cutPoint ) ;
+    t.settheta( nv[ 0 ].vec_theta ) ;
     t.parentNode = 0 ;
 
     //now loop through the rest of the nodes knowing parent is already there.
     for( size_t i = 1 ; i != nv.size( ) ; i++ )
     {
         CTree::tree_p np = new CTree ;
-        np->var_Index = nv[ i ].v ;
-        np->rawValue = nv[ i ].c ;
-        np->theta = nv[ i ].theta ;
+        np->var_Index = nv[ i ].var ;
+        np->rawValue = nv[ i ].cutPoint ;
+        np->theta = nv[ i ].vec_theta ;
         tid = nv[ i ].id ;
         pts[ tid ] = np ;
         pid = tid / 2 ;
@@ -437,8 +437,12 @@ std::istream& operator>>( std::istream& is , CTree& t )
 
 }
 
-void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
+void CTree::grow( CState& state , CModel& model , arma::umat& Xorder )
 {
+
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT("");
+
 
     // this is main growing function of one recursion.
     // conditions to stop growing
@@ -482,14 +486,14 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
     {
 
         // split
-        model.calculate_criterion( state , Xorder , split_var , split_point ,
-            num_obs_left , num_obs_right , this , splitable ) ;
+        model.calculate_criterion( state , Xorder , split_var , split_point , 
+                                    num_obs_left , num_obs_right , this , splitable ) ;
 
         if( splitable )
         {
             this->var_Index = split_var ;
             this->c_index = split_point ;
-            this->rawValue = state.split_candidates[ split_point ] ;
+            this->rawValue = state.m_vec_split_candidates[ split_point ] ;
         }
         else
         {
@@ -509,8 +513,8 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
     // Xorder matrix carries indexing of data in leaves
     split_Xorder( Xorder_left , Xorder_right , Xorder , split_point , split_var , state , model ) ;
 
-    CTree::tree_p lchild = new CTree( ( *state.Z ).n_cols ) ;
-    CTree::tree_p rchild = new CTree( ( *state.Z ).n_cols ) ;
+    CTree::tree_p lchild = new CTree( ( *state.m_matx_Z_train ).n_cols ) ;
+    CTree::tree_p rchild = new CTree( ( *state.m_matx_Z_train ).n_cols ) ;
 
     this->leftChild = lchild ;
     this->rightChild = rchild ;
@@ -518,22 +522,36 @@ void CTree::grow( State& state , CModel& model , arma::umat& Xorder )
     lchild->depth = this->depth + 1 ;
     rchild->depth = this->depth + 1 ;
 
+
     // recursion for the next round
+    DEBUG_PRINT_SPACE ;
+    DEBUG_PRINT_SPACE ;   
+    cout << "leftChild->grow" << endl ;    
     this->leftChild->grow( state , model , Xorder_left ) ;
+
+    DEBUG_PRINT_SPACE ;
+    DEBUG_PRINT_SPACE ;
+    cout << "rightChild->grow" << endl ;    
     this->rightChild->grow( state , model , Xorder_right ) ;
 
     return ;
 
 }
 
-void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right ,
-    arma::umat& Xorder , size_t split_point , size_t split_var ,
-    State& state , CModel& model )
+
+
+void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right , 
+                         arma::umat& Xorder , size_t split_point , size_t split_var , 
+                         CState& state , CModel& model )
 {
+
+
+    DEBUG_PRINT_SPACE;
+    DEBUG_PRINT("");
 
     size_t num_obs = Xorder.n_rows ;
 
-    double cutvalue = state.split_candidates[ split_point ] ;
+    double cutvalue = state.m_vec_split_candidates[ split_point ] ;
 
     size_t left_index ;
     size_t right_index ;
@@ -547,7 +565,7 @@ void CTree::split_Xorder( arma::umat& Xorder_left , arma::umat& Xorder_right ,
         {
 
             // loop over observations
-            if( ( *state.X )( Xorder( j , i ) , split_var ) <= cutvalue )
+            if( ( *state.m_matx_X_train )( Xorder( j , i ) , split_var ) <= cutvalue )
             {
                 // left side
                 Xorder_left( left_index , i ) = Xorder( j , i ) ;
@@ -574,7 +592,7 @@ void CTree::predict( arma::mat X , arma::vec months , arma::vec& output )
     CTree::tree_p bottom_pointer ;
     for( size_t i = 0 ; i < N_test ; i++ )
     {
-        bottom_pointer = this->bn( X , i ) ;
+        bottom_pointer = this->ptr2Bottom( X , i ) ;
         output( i ) = bottom_pointer->theta[ months( i ) ] ;
     }
 
@@ -603,7 +621,7 @@ json CTree::to_json( )
         j[ "variable" ] = this->var_Index ;
         j[ "cutpoint" ] = this->rawValue ;
         j[ "cutpoint_index" ] = this->c_index ;
-        j[ "nodeid" ] = this->nid( ) ;
+        j[ "nodeid" ] = this->nodeID( ) ;
         j[ "depth" ] = this->depth ;
         j[ "left" ] = this->leftChild->to_json( ) ;
         j[ "right" ] = this->rightChild->to_json( ) ;

@@ -5,7 +5,7 @@
 json tree_to_json( CAPTree& root )
 {
     json output ;
-    output[ "dim_theta" ] = root.theta.size( ) ;
+    output[ "dim_theta" ] = root.m_vec_month_theta.size( ) ;
     output[ "num_nodes" ] = root.treeSize( ) ;
 
     json tree_json = root.to_json( ) ;
